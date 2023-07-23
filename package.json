@@ -1,0 +1,19 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxthq/ui": "^2.6.0",
+    "@types/encoding-japanese": "^2.0.1",
+    "@types/node": "^18.16.19",
+    "encoding-japanese": "^2.0.0",
+    "nuxt": "^3.6.5"
+  }
+}
