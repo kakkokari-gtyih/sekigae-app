@@ -90,6 +90,7 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
         return bPriority - aPriority;
     });
 
+
     const assignedStudents: Student[] = [];
 
     for (const student of sortedStudents) {
@@ -99,7 +100,7 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
             continue;
         }
 
-        const { row, col } = findBestSeat(student, seats, considerOptions);
+        const { row, col } = findBestSeat(student, seats, classroom, considerOptions);
         if (row === -1 || col === -1) {
             throw new Error("Not enough seats");
         }
@@ -119,12 +120,12 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
  * @param considerOptions 条件を考慮するか？（デフォルト: `true`）
  * @returns 生徒に割り当てた座席 (col, row)
  */
-function findBestSeat(student: Student, seats: Seat[], considerOptions: boolean = true): Seat {
+function findBestSeat(student: Student, seats: Seat[], classroom: Classroom, considerOptions: boolean = true): Seat {
     const { chooseOptions } = student;
     let bestSeat: Seat | null = null;
 
     if (!considerOptions) {
-        return shuffleArray(seats)[0];
+        return seats[0];
     }
 
     for (const seat of seats) {
@@ -134,13 +135,35 @@ function findBestSeat(student: Student, seats: Seat[], considerOptions: boolean 
         }
 
         if (chooseOptions) {
-            const isBetterSeat =
-                (chooseOptions.y === 'front' && seat.row < bestSeat.row) ||
-                (chooseOptions.y === 'rear' && seat.row > bestSeat.row) ||
-                (chooseOptions.x === 'left' && seat.col < bestSeat.col) ||
-                (chooseOptions.x === 'right' && seat.col > bestSeat.col);
+            const judgeBetterSeat = (seat: Seat, bestSeat: Seat, classroom: Classroom): boolean => {
+                if (!chooseOptions.x && !chooseOptions.y) {
+                    return false;
+                }
 
-            if (isBetterSeat) {
+                if (chooseOptions.y) {
+                    if ((chooseOptions.y === 'front' && (seat.col < bestSeat.col || seat.col < (classroom[0].length - 1) / 2)) ||
+                    (chooseOptions.y === 'rear' && (seat.col > bestSeat.col || seat.col > (classroom[0].length - 1) / 2))) {
+                        if (!chooseOptions.x) {
+                            return true;
+                        }
+                    } else if (chooseOptions.x) {
+                        return false;
+                    }    
+                }
+
+                if (chooseOptions.x) {
+                    if ((chooseOptions.x === 'left' && (seat.row < bestSeat.row || seat.row < (classroom.length - 1) / 2)) ||
+                    (chooseOptions.x === 'right' && (seat.row > bestSeat.row || seat.row > (classroom.length - 1) / 2))) {
+                        return true;
+                    } else if (chooseOptions.y) {
+                        return false;
+                    }    
+                }
+
+                return false;
+            };
+
+            if (judgeBetterSeat(seat, bestSeat, classroom)) {
                 bestSeat = seat;
             }
         }

@@ -23,21 +23,26 @@
                     @click="settingsTab = 'exec'">
                     ③席替え実行
                 </button>
-                <NuxtLink to="https://github.com/natureofmad/sekigae-app" target="_blank" class="ml-auto text-base hover:opacity-75">
+                <NuxtLink to="https://github.com/kakkokari-gtyih/sekigae-app" target="_blank"
+                    class="ml-auto text-base hover:opacity-75">
                     ソースコードはこちら
                 </NuxtLink>
             </nav>
 
             <UCard v-if="settingsTab === 'classroom'" class="flex flex-col flex-1 overflow-y-auto">
                 <div class="flex items-center mb-4">
-                    <p>{{ classroom.length }}列 × {{ classroom[0].length }}行&emsp;選択済み: <b>{{ availableSeats }}</b> 席 （生徒数: <b>{{
-                        students.length }}</b> 人）</p>
+                    <p>{{ classroom.length }}列 × {{ classroom[0].length }}行&emsp;選択済み: <b>{{ availableSeats }}</b> 席 （生徒数:
+                        <b>{{
+                            students.length }}</b> 人）
+                    </p>
                 </div>
                 <div class="w-full grid gap-1" :style="`grid-template-columns: auto repeat(${classroom.length}, 1fr) auto`">
                     <div :style="`grid-column: 1 / ${classroom.length + 3}`" class="text-center text-lg font-bold p-1">
-                        <UIcon name="i-heroicons-arrow-small-up" style="height: 1em; width: 1em; vertical-align: -.125em;" />
+                        <UIcon name="i-heroicons-arrow-small-up"
+                            style="height: 1em; width: 1em; vertical-align: -.125em;" />
                         前方
-                        <UIcon name="i-heroicons-arrow-small-up" style="height: 1em; width: 1em; vertical-align: -.125em;" />
+                        <UIcon name="i-heroicons-arrow-small-up"
+                            style="height: 1em; width: 1em; vertical-align: -.125em;" />
                     </div>
                     <div class="space-y-1 grid grid-cols-1 h-full">
                         <div class="h-1"></div>
@@ -70,7 +75,8 @@
                 <div class="flex items-center mb-4">
                     <div>
                         <p><b>{{ availableSeats }}</b> 席に対して、現在の人数 <b>{{ students.length }}</b> 人</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。</p>
                     </div>
                     <div class="ml-auto">
                         <UButton icon="i-heroicons-user-plus" label="メンバーの追加" color="primary" class="mr-2"
@@ -129,12 +135,15 @@
 
             <UCard v-if="settingsTab === 'exec'" class="flex flex-col flex-1 overflow-y-auto">
                 <div class="mb-4 flex space-x-2 justify-center">
-                    <USelect v-model="effect" option-attribute="name" :options="[{ name: 'エフェクトなし', value: 'none' }, { name: 'スロット', value: 'slot' }]" />
-                    <UButton color="primary" variant="solid" label="席替え実施" :disabled="effectState === 'running'" @click="execSekigae()" />
+                    <USelect v-model="effect" option-attribute="name"
+                        :options="[{ name: 'エフェクトなし', value: 'none' }, { name: 'スロット', value: 'slot' }]" />
+                    <UButton color="primary" variant="solid" label="席替え実施" :disabled="effectState === 'running'"
+                        @click="execSekigae()" />
                 </div>
                 <SeatRenderer id="seats" :classroom="classroom" :seats="resultForRendering" class="mb-4" />
                 <div class="flex space-x-2 justify-center">
-                    <UButton v-if="effect === 'slot' && effectState !== 'done'" color="primary" size="lg" variant="solid" label="ストップ！" :disabled="!slotSpinning" @click="slotSpinning = false" />
+                    <UButton v-if="effect === 'slot' && effectState !== 'done'" color="primary" size="lg" variant="solid"
+                        label="ストップ！" :disabled="!slotSpinning" @click="slotSpinning = false" />
                     <template v-else-if="effectState === 'done'">
                         <UButton color="white" label="CSVでダウンロード" @click="exportResultToCSV()" />
                     </template>
@@ -165,10 +174,12 @@
                         </UFormGroup>
                         <div class="py-1 flex items-center">
                             <UToggle v-model="enableFixedPosition" />
-                            <button class="text-sm ml-1" @click="enableFixedPosition = !enableFixedPosition">固定配置を有効にする</button>
+                            <button class="text-sm ml-1"
+                                @click="enableFixedPosition = !enableFixedPosition">固定配置を有効にする</button>
                         </div>
                         <div v-if="enableFixedPosition">
-                            <SeatSelector :classroom="classroom" :initial="currentEditObject.seat" @change="studentEditSeatHandler" />
+                            <SeatSelector :classroom="classroom" :initial="currentEditObject.seat"
+                                @change="studentEditSeatHandler" />
                         </div>
                         <div class="py-1 flex items-center">
                             <UToggle v-model="enableCondition" />
@@ -177,7 +188,8 @@
                         <div v-if="enableCondition && currentEditObject.chooseOptions" class="space-y-4">
                             <div class="space-y-2">
                                 <!-- @vue-ignore -->
-                                <URadio v-model="currentEditObject.chooseOptions.x" :value="'left'" name="chooseOptionsLR" label="左側優先" />
+                                <URadio v-model="currentEditObject.chooseOptions.x" :value="'left'" name="chooseOptionsLR"
+                                    label="左側優先" />
                                 <!-- @vue-ignore -->
                                 <URadio v-model="currentEditObject.chooseOptions.x" :value="'right'" name="chooseOptionsLR"
                                     label="右側優先" />
@@ -190,13 +202,15 @@
                                 <URadio v-model="currentEditObject.chooseOptions.y" :value="'front'" name="chooseOptionsFB"
                                     label="前方優先" />
                                 <!-- @vue-ignore -->
-                                <URadio v-model="currentEditObject.chooseOptions.y" :value="'rear'" name="chooseOptionsFB" label="後方優先" />
+                                <URadio v-model="currentEditObject.chooseOptions.y" :value="'rear'" name="chooseOptionsFB"
+                                    label="後方優先" />
                                 <!-- @vue-ignore -->
                                 <URadio v-model="currentEditObject.chooseOptions.y" :value="null" name="chooseOptionsFB"
                                     label="前後の希望なし" />
                             </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400">
-                                <span class="text-yellow-700 dark:text-yellow-400 font-bold">【免責事項】</span>席の割り当ては、上記の設定に基づいて行われますが、条件に反した席が選ばれる可能性があります。希望に基づいて席を割り当てるために優先順位を考慮していますが、希望に合致する席が利用可能な場合にのみ割り当てが行われるため、利用可能な席が希望に合致しない場合や、席が不足している場合には、条件に反した席が選ばれる可能性があります。
+                                <span
+                                    class="text-yellow-700 dark:text-yellow-400 font-bold">【免責事項】</span>席の割り当ては、上記の設定に基づいて行われますが、条件に反した席が選ばれる可能性があります。希望に基づいて席を割り当てるために優先順位を考慮していますが、希望に合致する席が利用可能な場合にのみ割り当てが行われるため、利用可能な席が希望に合致しない場合や、席が不足している場合には、条件に反した席が選ばれる可能性があります。
                             </div>
                         </div>
                     </div>
@@ -234,7 +248,6 @@
         </UContainer>
         <UNotifications />
     </div>
-    
 </template>
 <script setup lang="ts">
 import type { Classroom, Student, Seat } from '@/lib/sekigae';
@@ -379,11 +392,11 @@ function importFromCSV() {
 
                             return {
                                 studentId: parseInt(parsedStudent[0]),
-                                name: parsedStudent[1] ?? undefined,
-                                furigana: parsedStudent[2] ?? undefined,
+                                name: parsedStudent[1] == '' ? undefined : parsedStudent[1],
+                                furigana: parsedStudent[2] == '' ? undefined : parsedStudent[2],
                                 chooseOptions: {
-                                    x: parsedStudent[3] ?? undefined,
-                                    y: parsedStudent[4] ?? undefined,
+                                    x: parsedStudent[3] == '' ? undefined : parsedStudent[3],
+                                    y: parsedStudent[4] == '' ? undefined : parsedStudent[4],
                                 },
                                 seat,
                             } as Student;
@@ -615,7 +628,7 @@ function execSekigae() {
         function spin() {
             result.value = assignSeats(copiedStudents, copiedClassroom, false);
             if (!slotSpinning.value) {
-                if(slotSpeed <= 150) {
+                if (slotSpeed <= 150) {
                     slotSpeed += 10;
                 } else {
                     slotSpeed += 50;
@@ -651,14 +664,14 @@ function exportResultToCSV() {
     }
 
     const out = result.value.map((e) => [
-                e.studentId.toString(),
-                e.name ?? '',
-                e.furigana ?? '',
-                (e.seat) ? (e.seat.row + 1) : '',
-                (e.seat) ? (e.seat.col + 1) : '',
-                (e.seat) ? getSeatNumber(e.seat, classroom.value).toString() : '',
-                (e.seat) ? [(e.seat.col + 1), (e.seat.row + 1)].join('_') : '',
-            ].map((f) => `"${f}"`).join(','));
+        e.studentId.toString(),
+        e.name ?? '',
+        e.furigana ?? '',
+        (e.seat) ? (e.seat.row + 1) : '',
+        (e.seat) ? (e.seat.col + 1) : '',
+        (e.seat) ? getSeatNumber(e.seat, classroom.value).toString() : '',
+        (e.seat) ? [(e.seat.col + 1), (e.seat.row + 1)].join('_') : '',
+    ].map((f) => `"${f}"`).join(','));
     out.unshift('出席番号,名前,ふりがな,行,列,座席通し番号,座席指定(R_C)');
     downloadCSVFile(out.join('\r\n'), 'sekigaeResult.csv');
 }
