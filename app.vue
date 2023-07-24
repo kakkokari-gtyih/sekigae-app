@@ -31,11 +31,9 @@
             </nav>
 
             <UCard v-if="settingsTab === 'classroom'" class="flex flex-col flex-1 overflow-y-auto">
-                <div class="flex items-center mb-4">
-                    <p>{{ classroom.length }}列 × {{ classroom[0].length }}行&emsp;選択済み: <b>{{ availableSeats }}</b> 席 （生徒数:
-                        <b>{{
-                            students.length }}</b> 人）
-                    </p>
+                <div class="mb-4">
+                    <p><b>{{ classroom.length }}</b> 列 × <b>{{ classroom[0].length }}</b> 行&emsp;選択済み: <b>{{ availableSeats }}</b> 席 （生徒数: <b>{{  students.length }}</b> 人）</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">教室のタテ・ヨコの机の数と合わせたあと、存在しない席を選択して灰色にしてください。</p>
                 </div>
                 <div class="w-full grid gap-1" :style="`grid-template-columns: auto repeat(${classroom.length}, 1fr) auto`">
                     <div :style="`grid-column: 1 / ${classroom.length + 3}`" class="text-center text-lg font-bold p-1">
@@ -76,8 +74,8 @@
                 <div class="flex items-center mb-4">
                     <div>
                         <p><b>{{ availableSeats }}</b> 席に対して、現在の人数 <b>{{ students.length }}</b> 人</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">
-                            このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。</p>
                     </div>
                     <div class="ml-auto">
                         <UButton icon="i-heroicons-user-plus" label="メンバーの追加" color="primary" class="mr-2"
@@ -134,20 +132,28 @@
                 </UTable>
             </UCard>
 
-            <UCard v-if="settingsTab === 'exec'" class="flex flex-col flex-1 overflow-y-auto">
-                <div class="mb-4 flex space-x-2 justify-center">
-                    <USelect v-model="effect" option-attribute="name"
-                        :options="[{ name: 'エフェクトなし', value: 'none' }, { name: 'スロット', value: 'slot' }]" />
-                    <UButton color="primary" variant="solid" label="席替え実施" :disabled="effectState === 'running'"
-                        @click="execSekigae()" />
-                </div>
-                <SeatRenderer id="seats" :classroom="classroom" :seats="resultForRendering" class="mb-4" />
-                <div class="flex space-x-2 justify-center">
-                    <UButton v-if="effect === 'slot' && effectState !== 'done'" color="primary" size="lg" variant="solid"
-                        label="ストップ！" :disabled="!slotSpinning" @click="slotSpinning = false" />
-                    <template v-else-if="effectState === 'done'">
-                        <UButton color="white" label="CSVでダウンロード" @click="exportResultToCSV()" />
-                    </template>
+            <UCard v-if="settingsTab === 'exec'">
+                <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto p-1 bg-white dark:bg-slate-950" :class="isFullScreen && 'p-6 justify-center'">
+                    <div class="mb-4 flex space-x-2 justify-center">
+                        <USelect v-model="effect" option-attribute="name"
+                            :options="[{ name: 'エフェクトなし', value: 'none' }, { name: 'スロット', value: 'slot' }, { name: 'カウントダウン', value: 'timer' }]" />
+                        <UButton color="primary" variant="solid" label="席替え実施" :disabled="effectState === 'running'"
+                            @click="execSekigae()" />
+                        <div class="border-l"></div>
+                        <UButton color="white" label="全画面表示（解除）" @click="toggleFullScreen()" />
+                    </div>
+                    <div class="relative overflow-hidden mb-4">
+                        <SeatRenderer id="seats" :classroom="classroom" :seats="resultForRendering" :lg="isFullScreen" />
+                        <div v-for="n of 3" :class="['absolute z-10 text-5xl lg:text-9xl font-bold top-1/2 left-1/2 opacity-0 text-red-500 select-none pointer-events-none', timerCount === n && $style.countAnim]">{{ n }}</div>
+                    </div>
+                    <div class="flex space-x-2 justify-center">
+                        <UButton v-if="effect === 'slot' && effectState !== 'done'" color="primary" size="lg" variant="solid"
+                            label="ストップ！" :disabled="!slotSpinning" @click="slotSpinning = false" />
+                        <template v-else-if="effectState === 'done'">
+                            <UButton color="white" label="CSVでダウンロード" @click="exportResultToCSV()" />
+                        </template>
+                    </div>
+                    <UNotifications v-if="isFullScreen" />
                 </div>
             </UCard>
 
@@ -250,6 +256,31 @@
         <UNotifications />
     </div>
 </template>
+
+<style module>
+.countAnim :global {
+    animation-name: count-anim;
+    animation-duration: 950ms;
+    animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+}
+
+@keyframes :global(count-anim) {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(3);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+</style>
+
 <script setup lang="ts">
 import type { Classroom, Student, Seat } from '@/lib/sekigae';
 import { arrangeSeats, assignSeats, getSeatNumber } from '@/lib/sekigae';
@@ -601,9 +632,10 @@ const studentActionItems = (row: Student) => [
 // Sekigae START
 const result = ref<Student[]>();
 const resultForRendering = computed<(Student | null)[][]>(() => arrangeSeats(result.value ?? [], classroom.value));
-const effect = ref<'none' | 'slot'>('none');
+const effect = ref<'none' | 'slot' | 'timer'>('none');
 const effectState = ref<'beforeRun' | 'running' | 'done'>('beforeRun');
 const slotSpinning = ref<boolean>(false);
+const timerCount = ref<number | null>(null);
 function execSekigae() {
     if (students.value.length !== availableSeats.value) {
         toast.add({
@@ -645,7 +677,22 @@ function execSekigae() {
         let slotSpeed: number = 50;
         slotSpinning.value = true;
         spin();
-    } else if (effect.value = 'none') {
+    } else if (effect.value === 'timer') {
+        result.value = undefined;
+        effectState.value = 'running';
+        timerCount.value = 4;
+        function decl() {
+            if (timerCount.value && timerCount.value > 1) {
+                timerCount.value--;
+                setTimeout(decl, 1000);
+            } else {
+                timerCount.value = 0;
+                result.value = JSON.parse(realResult);
+                effectState.value = 'done';
+            }
+        }
+        decl();
+    } else if (effect.value === 'none') {
         result.value = JSON.parse(realResult);
         effectState.value = 'done';
     }
@@ -722,6 +769,8 @@ if (process.client) {
 // Sekigae END
 
 // PostSekigae START
+const sekigaeResultView = ref<HTMLElement>();
+
 function exportResultToCSV() {
     if (!result.value) {
         toast.add({
@@ -744,6 +793,21 @@ function exportResultToCSV() {
     ].map((f) => `"${f}"`).join(','));
     out.unshift('出席番号,名前,ふりがな,行,列,座席通し番号,座席指定(R_C)');
     downloadCSVFile(out.join('\r\n'), 'sekigaeResult.csv');
+}
+
+const isFullScreen = ref<boolean>(false);
+function toggleFullScreen() {
+    if (process.client) {
+        if (document.fullscreenElement) {
+            document.exitFullscreen().then(() => {
+                isFullScreen.value = false;
+            });
+        } else if(sekigaeResultView.value) {
+            sekigaeResultView.value?.requestFullscreen().then(() => {
+                isFullScreen.value = true;
+            });
+        }
+    }
 }
 // PostSekigae END
 </script>
