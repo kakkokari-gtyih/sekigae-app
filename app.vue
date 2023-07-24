@@ -531,8 +531,8 @@ watch(enableFixedPosition, (to) => {
 
     if (to && !currentEditObject.value.seat) {
         currentEditObject.value.seat = {
-            row: 0,
-            col: 0,
+            row: null,
+            col: null,
         };
     } else if (!to) {
         currentEditObject.value.seat = undefined;
@@ -796,15 +796,23 @@ function exportResultToCSV() {
 }
 
 const isFullScreen = ref<boolean>(false);
+function resetFullScreenState() {
+    if (!document.fullscreenElement) {
+        isFullScreen.value = false;
+    }
+}
+
 function toggleFullScreen() {
     if (process.client) {
         if (document.fullscreenElement) {
             document.exitFullscreen().then(() => {
                 isFullScreen.value = false;
+                document.removeEventListener('fullscreenchange', resetFullScreenState);
             });
         } else if(sekigaeResultView.value) {
             sekigaeResultView.value?.requestFullscreen().then(() => {
                 isFullScreen.value = true;
+                document.addEventListener('fullscreenchange', resetFullScreenState);
             });
         }
     }

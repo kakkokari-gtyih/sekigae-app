@@ -1,9 +1,9 @@
 /** 座席 */
 export type Seat = {
     /** 列 */
-    row: number;
+    row: number | null;
     /** 行 */
-    col: number;
+    col: number | null;
 };
 
 /** 生徒オブジェクト */
