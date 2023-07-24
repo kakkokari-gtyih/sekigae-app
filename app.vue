@@ -1,9 +1,10 @@
 <template>
     <div>
         <UContainer class="mt-10 space-y-6">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-200 mb-2">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-200">
                 高機能席替えアプリ
             </h1>
+            <p>座席位置の希望（固定・前方/後方/左右）をかなえる席替えが可能です。</p>
 
             <nav class="flex items-center text-xl">
                 <button
@@ -648,6 +649,75 @@ function execSekigae() {
         result.value = JSON.parse(realResult);
         effectState.value = 'done';
     }
+}
+
+function calculateOptionProbability(students: Student[], classroom: Classroom, iterations: number): void {
+    const totalStudents = students.length;
+    const optionCounts: { [key: string]: number } = {};
+    const randomOptionCounts: { [key: string]: number } = {};
+
+    const studentsB = JSON.parse(JSON.stringify(students));
+    const classroomB = JSON.parse(JSON.stringify(classroom));
+
+    for (let i = 0; i < iterations; i++) {
+        const assignedStudents = assignSeats(students, classroom);
+        const randomStudents = assignSeats(studentsB, classroomB, false);
+        console.log({assignedStudents, randomStudents});
+        for (const student of assignedStudents) {
+            const { chooseOptions, seat } = student;
+            if (seat) {
+                const seatOption = getSeatOption(classroom, seat?.row, seat?.col);
+                const optionKey = JSON.stringify(chooseOptions);
+                optionCounts[optionKey] = (optionCounts[optionKey] || 0);
+                if (chooseOptions && seatOption && (!chooseOptions.x || chooseOptions.x === seatOption.x) && (!chooseOptions.y || chooseOptions.y === seatOption.y)) {
+                    optionCounts[optionKey] = (optionCounts[optionKey] || 0) + 1;
+                }
+            }
+        }
+        for (const student of randomStudents) {
+            const { chooseOptions, seat } = student;
+            if (seat) {
+                const seatOption = getSeatOption(classroom, seat?.row, seat?.col);
+                const optionKey = JSON.stringify(chooseOptions);
+                randomOptionCounts[optionKey] = (randomOptionCounts[optionKey] || 0);
+                if (chooseOptions && seatOption && (!chooseOptions.x || chooseOptions.x === seatOption.x) && (!chooseOptions.y || chooseOptions.y === seatOption.y)) {
+                    randomOptionCounts[optionKey] = (randomOptionCounts[optionKey] || 0) + 1;
+                }
+            }
+        }
+    }
+
+    console.log('希望通りになる確率:');
+    for (const optionKey in optionCounts) {
+        const count = optionCounts[optionKey];
+        const probability = count / (totalStudents * iterations);
+        console.log(`${optionKey}: ${probability * 100}%`);
+    }
+
+    console.log('ランダム配置時に希望通りになる確率:');
+    for (const optionKey in optionCounts) {
+        const count = randomOptionCounts[optionKey];
+        const probability = count / (totalStudents * iterations);
+        console.log(`${optionKey}: ${probability * 100}%`);
+    }
+
+}
+
+function getSeatOption(classroom: Classroom, row: number, col: number): Student['chooseOptions'] {
+    const numRows = classroom.length - 1;
+    const numCols = classroom[0].length - 1;
+    const x = row < numRows / 2 ? 'left' : 'right';
+    const y = col < numCols / 2 ? 'front' : 'rear';
+    return { x, y };
+}
+
+if (process.client) {
+    //@ts-ignore
+    window.calcU = () => {
+        const studentsA = JSON.parse(JSON.stringify(students.value));
+        const classroomA = JSON.parse(JSON.stringify(classroom.value));
+        calculateOptionProbability(studentsA, classroomA, 1000);
+    };
 }
 // Sekigae END
 
