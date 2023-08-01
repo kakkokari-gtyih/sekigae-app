@@ -94,7 +94,7 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
     const assignedStudents: Student[] = [];
 
     for (const student of sortedStudents) {
-        if (student.seat && considerOptions) {
+        if (student.seat && student.seat.col && student.seat.row && considerOptions) {
             assignedStudents.push(student);
             seats.splice(findSeatIndex(student.seat.row, student.seat.col, seats), 1);
             continue;
