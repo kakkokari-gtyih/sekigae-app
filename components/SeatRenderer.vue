@@ -1,20 +1,33 @@
 <template>
-    <div class="w-full grid gap-1" :style="`grid-template-columns: repeat(${classroom.length}, 1fr)`">
-        <div :style="`grid-column: 1 / ${classroom.length + 1}`" class="text-center font-bold p-1" :class="lg ? 'text-3xl' : 'text-xl'">
+    <div class="w-full grid gap-1" :style="`grid-template-columns: ${showRowCol ? 'auto ' : ''}repeat(${classroom.length}, 1fr)`">
+        <div :style="`grid-column: ${showRowCol ? '2' : '1'} / ${classroom.length + (showRowCol ? 2 : 1)}`" class="text-center font-bold p-1" :class="lg ? 'text-3xl' : 'text-xl'">
             <UIcon name="i-heroicons-arrow-small-up" style="height: 1em; width: 1em; vertical-align: -.125em;" />
             前
             <UIcon name="i-heroicons-arrow-small-up" style="height: 1em; width: 1em; vertical-align: -.125em;" />
         </div>
+        <div v-if="showRowCol" class="space-y-1 grid grid-cols-1 h-full">
+            <div :class="lg ? 'h-16' : 'h-12'"></div>
+            <div v-for="seat, i in classroom[0]" class="relative flex after:border-transparent after:border-l-sky-200 dark:after:border-l-sky-800" :class="lg ? 'after:border-y-[50px] after:border-l-[30px]' : 'after:border-y-[30px] after:border-l-[20px]'">
+                <div class="bg-sky-200 dark:bg-sky-800 pl-1 rounded-l-lg text-center font-bold" :class="lg ? 'text-2xl' : ''" style="writing-mode: vertical-rl; text-orientation: upright;">
+                    {{ i + 1 }}列
+                </div>
+            </div>
+        </div>
         <div v-for="row, i in classroom" class="space-y-1">
+            <div v-if="showRowCol" class="relative flex flex-col items-center after:h-full after:border-transparent after:border-t-sky-200 dark:after:border-t-sky-800 after:border-t-[16px]" :class="lg ? 'after:w-[60px] after:border-x-[30px]' : 'after:w-[40px] after:border-x-[20px]'">
+                <div class="w-full text-center p-1 font-bold rounded-lg bg-sky-200 dark:bg-sky-800" :class="lg ? 'text-2xl py-2' : ''">
+                    {{ getAlphabetCode(i + 1) }}席
+                </div>
+            </div>
             <template v-for="seat, j in row">
-                <div :class="['relative font-bold flex flex-col justify-center', (seats && seats[i][j]) ? 'bg-yellow-200 dark:bg-yellow-600': 'bg-gray-200 dark:bg-gray-800', lg ? 'min-h-[100px]' : 'min-h-[60px]']">
+                <div :class="['relative font-bold flex flex-col justify-center text-gray-900', (seats && seats[i][j]) ? 'bg-yellow-200 dark:bg-yellow-600': 'bg-gray-200 dark:bg-gray-800', lg ? 'h-[100px]' : 'h-[60px]']">
                     <template v-if="seats && seats[i][j]">
                         <template v-if="seats[i][j].name">
-                            <div class="absolute top-0 left-0 bg-yellow-400 text-center font-bold rounded-br-md" :class="lg ? 'w-10 text-xl' : 'w-7 text-base'">{{ seats[i][j].studentId }}</div>
-                            <div v-if="seats[i][j].furigana" class="text-center" :class="lg ? 'text-base' : 'text-xs'">{{ seats[i][j].furigana }}</div>
-                            <div class="text-center" :class="lg ? 'text-4xl' : 'text-2xl'">{{ seats[i][j].name }}</div>
+                            <div class="absolute top-0 left-0 bg-yellow-400 text-center font-bold rounded-br-md" :class="lg ? 'w-10 text-xl 2xl:text-2xl' : 'w-7 text-base hidden md:block'">{{ seats[i][j].studentId }}</div>
+                            <div v-if="seats[i][j].furigana" class="text-center" :class="lg ? 'text-base 2xl:text-xl' : 'text-xs'">{{ seats[i][j].furigana }}</div>
+                            <div class="text-center" :class="lg ? 'lg:text-3xl xl:text-4xl 2xl:text-[2.75rem] 2xl:leading-[3rem]' : 'text-lg lg:text-xl xl:text-2xl'">{{ seats[i][j].name }}</div>
                         </template>
-                        <div v-else class="text-center" :class="lg ? 'text-4xl' : 'text-2xl'">
+                        <div v-else class="text-center" :class="lg ? 'lg:text-3xl xl:text-4xl 2xl:text-[2.75rem] 2xl:leading-[3rem]' : 'text-lg lg:text-xl xl:text-2xl'">
                             {{ seats[i][j].studentId }}
                         </div>
                     </template>
@@ -31,9 +44,24 @@ const props = withDefaults(defineProps<{
     classroom: Classroom;
     seats?: Student[][];
     lg?: boolean;
+    showRowCol?: boolean;
 }>(), {
     lg: false,
+    showRowCol: false,
 });
+
+function getAlphabetCode(numeric_col_index: number): string {
+    const RADIX = 26;
+    const A = 'A'.charCodeAt(0);
+    let n = numeric_col_index;
+    let s = "";
+    while (n >= 1) {
+        n--;
+        s = String.fromCharCode(A + (n % RADIX)) + s;
+        n = Math.floor(n / RADIX);
+    }
+    return s;
+}
 </script>
 
 <style scoped></style>

@@ -1,161 +1,164 @@
 <template>
     <div>
-        <UContainer class="mt-10 space-y-6">
+        <UContainer class="mt-5 space-y-6">
             <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-200">
                 高機能席替えアプリ
             </h1>
             <p>座席位置の希望（固定・前方/後方/左右）をかなえる席替えが可能です。</p>
 
-            <nav class="flex items-center text-xl">
-                <button
-                    :class="['p-4 border-b-2 hover:opacity-75', (settingsTab === 'classroom') ? 'border-slate-800 dark:border-slate-300' : 'border-transparent']"
-                    @click="settingsTab = 'classroom'">
-                    ①座席の配置
-                </button>
-                <UIcon name="i-heroicons-chevron-right" class="pb-0.5" />
-                <button
-                    :class="['p-4 border-b-2 hover:opacity-75', (settingsTab === 'students') ? 'border-slate-800 dark:border-slate-300' : 'border-transparent']"
-                    @click="settingsTab = 'students'">
-                    ②メンバーの情報
-                </button>
-                <UIcon name="i-heroicons-chevron-right" class="pb-0.5" />
-                <button
-                    :class="['p-4 border-b-2 hover:opacity-75', (settingsTab === 'exec') ? 'border-slate-800 dark:border-slate-300' : 'border-transparent']"
-                    @click="settingsTab = 'exec'">
-                    ③席替え実行
-                </button>
-                <NuxtLink to="https://github.com/kakkokari-gtyih/sekigae-app" target="_blank"
-                    class="ml-auto text-base hover:opacity-75">
-                    ソースコードはこちら
-                </NuxtLink>
-            </nav>
+            <UTabs :items="settingsTab" :default-index="0" v-model="settingsTabIndex">
+                <template #classroom>
+                    <UCard class="flex flex-col flex-1 overflow-y-auto">
+                        <div class="mb-4">
+                            <p><b>{{ classroom[0].length }}</b> 列 × <b>{{ classroom.length }}</b> 行&emsp;選択済み: <b>{{ availableSeats }}</b> 席 （生徒数: <b>{{ students.length }}</b> 人）</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">教室のタテ・ヨコの机の数と合わせたあと、存在しない席を選択して灰色にしてください。</p>
+                        </div>
+                        <div class="w-full grid gap-1" :style="`grid-template-columns: auto repeat(${classroom.length}, 1fr) auto`">
+                            <div :style="`grid-column: 1 / ${classroom.length + 3}`" class="text-center text-lg font-bold p-1">
+                                <UIcon name="i-heroicons-arrow-small-up"
+                                    style="height: 1em; width: 1em; vertical-align: -.125em;" />
+                                前
+                                <UIcon name="i-heroicons-arrow-small-up"
+                                    style="height: 1em; width: 1em; vertical-align: -.125em;" />
+                            </div>
+                            <div class="space-y-1 grid grid-cols-1 h-full">
+                                <div class="h-1"></div>
+                                <UButton v-for="seat, i in classroom[0]" :block="true" color="white" icon="i-heroicons-x-mark"
+                                    @click="delCol(i)">
+                                </UButton>
+                            </div>
+                            <div v-for="row, i in classroom" class="space-y-1">
+                                <UButton :block="true" color="white" icon="i-heroicons-x-mark" @click="delRow(i)">
+                                </UButton>
+                                <button v-for="seat, j in row"
+                                    :class="['block w-full min-h-[60px] p-3', seat ? 'bg-yellow-200 dark:bg-yellow-600' : 'bg-gray-200 dark:bg-gray-800']"
+                                    @click="classroom[i][j] = !seat">
+                                </button>
+                            </div>
+                            <div class="space-y-1 grid h-full" style="grid-template-rows: 32px 1fr;">
+                                <div></div>
+                                <UButton :block="true" icon="i-heroicons-plus" style="writing-mode: vertical-rl;" @click="addRow()">
+                                    行を追加
+                                </UButton>
+                            </div>
+                            <UButton :block="true" icon="i-heroicons-plus" :style="`grid-column: 2 / ${classroom.length + 2}`"
+                                @click="addCol()">
+                                列を追加
+                            </UButton>
+                        </div>
+                    </UCard>
+                </template>
 
-            <UCard v-if="settingsTab === 'classroom'" class="flex flex-col flex-1 overflow-y-auto">
-                <div class="mb-4">
-                    <p><b>{{ classroom.length }}</b> 列 × <b>{{ classroom[0].length }}</b> 行&emsp;選択済み: <b>{{ availableSeats }}</b> 席 （生徒数: <b>{{  students.length }}</b> 人）</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">教室のタテ・ヨコの机の数と合わせたあと、存在しない席を選択して灰色にしてください。</p>
-                </div>
-                <div class="w-full grid gap-1" :style="`grid-template-columns: auto repeat(${classroom.length}, 1fr) auto`">
-                    <div :style="`grid-column: 1 / ${classroom.length + 3}`" class="text-center text-lg font-bold p-1">
-                        <UIcon name="i-heroicons-arrow-small-up"
-                            style="height: 1em; width: 1em; vertical-align: -.125em;" />
-                        前方
-                        <UIcon name="i-heroicons-arrow-small-up"
-                            style="height: 1em; width: 1em; vertical-align: -.125em;" />
-                    </div>
-                    <div class="space-y-1 grid grid-cols-1 h-full">
-                        <div class="h-1"></div>
-                        <UButton v-for="seat, i in classroom[0]" :block="true" color="white" icon="i-heroicons-x-mark"
-                            @click="delCol(i)">
-                        </UButton>
-                    </div>
-                    <div v-for="row, i in classroom" class="space-y-1">
-                        <UButton :block="true" color="white" icon="i-heroicons-x-mark" @click="delRow(i)">
-                        </UButton>
-                        <button v-for="seat, j in row"
-                            :class="['block w-full min-h-[60px] p-3', seat ? 'bg-yellow-200 dark:bg-yellow-600' : 'bg-gray-200 dark:bg-gray-800']"
-                            @click="classroom[i][j] = !seat">
-                        </button>
-                    </div>
-                    <div class="space-y-1 grid h-full" style="grid-template-rows: 32px 1fr;">
-                        <div></div>
-                        <UButton :block="true" icon="i-heroicons-plus" style="writing-mode: vertical-rl;" @click="addRow()">
-                            列を追加
-                        </UButton>
-                    </div>
-                    <UButton :block="true" icon="i-heroicons-plus" :style="`grid-column: 2 / ${classroom.length + 2}`"
-                        @click="addCol()">
-                        行を追加
-                    </UButton>
-                </div>
-            </UCard>
+                <template #students>
+                    <UCard class="flex flex-col flex-1 overflow-y-auto">
+                        <div class="flex items-center mb-4">
+                            <div>
+                                <p>座席数 <b>{{ availableSeats }}</b> 席に対して、現在の人数 <b>{{ students.length }}</b> 人</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。</p>
+                            </div>
+                            <div class="ml-auto">
+                                <UButton icon="i-heroicons-user-plus" label="メンバーの追加" color="primary" class="mr-2"
+                                    @click="openStudentEdit()" />
+                                <UDropdown :items="[
+                                    [
+                                        {
+                                            label: 'かんたん一括挿入',
+                                            icon: 'i-heroicons-clipboard-document-list',
+                                            click: openStudentEasyInput,
+                                        },
+                                        {
+                                            label: 'インポート',
+                                            icon: 'i-heroicons-arrow-up-tray',
+                                            click: importFromCSV,
+                                        },
+                                        {
+                                            label: 'エクスポート',
+                                            icon: 'i-heroicons-arrow-down-tray',
+                                            click: exportToCSV,
+                                        },
+                                    ],
+                                    [
+                                        {
+                                            label: 'CSVひな型ダウンロード',
+                                            icon: 'i-heroicons-arrow-down-tray',
+                                            click: downloadCSV,
+                                        }
+                                    ]
+                                ]">
+                                    <UButton icon="i-heroicons-chevron-down-20-solid" color="gray" />
+                                </UDropdown>
+                            </div>
+                        </div>
+                        <UTable
+                            :columns="[
+                                { key: 'studentId', label: '出席番号' },
+                                { key: 'name', label: '名前' },
+                                { key: 'fixed', label: '固定配置' },
+                                { key: 'condition', label: '優先配置' },
+                                { key: 'actions' },
+                            ]"
+                            :rows="students"
+                            :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: '読み込み中…' }"
+                            :loading="isUploadingCSV">
+                            <template #empty-state>
+                                <div class="flex flex-col items-center justify-center py-6 space-y-3">
+                                    <p class="text-sm text-center">
+                                        メンバーが誰も追加されていません。
+                                    </p>
+                                    <div class="flex space-x-2">
+                                        <UButton icon="i-heroicons-user-plus" label="メンバーの追加" @click="openStudentEdit()" />
+                                        <UButton icon="i-heroicons-arrow-up-tray" color="gray" label="CSVインポート" @click="importFromCSV()" />
+                                    </div>
+                                    <p class="text-xs text-center">
+                                        <button class="text-primary-500 font-medium border-b border-b-transparent hover:border-b-primary-500 focus:border-b-primary-500" @click="downloadCSV()">CSVのひな型をダウンロード</button>
+                                    </p>
+                                </div>
+                            </template>
+                            <template #fixed-data="{ row }" class="w-auto">
+                                {{ row.seat !== undefined ? 'あり' : 'なし' }}
+                            </template>
+                            <template #condition-data="{ row }" class="w-auto">
+                                <!-- @vue-ignore -->
+                                {{ Object.values(row?.chooseOptions ?? {}).some((e) => ['left', 'right', 'front', 'rear'].includes(e ?? '')) ? 'あり' : 'なし' }}
+                            </template>
+                            <template #actions-data="{ row }" class="w-auto">
+                                <UDropdown :items="studentActionItems(row)">
+                                    <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                                </UDropdown>
+                            </template>
+                        </UTable>
+                    </UCard>
+                </template>
 
-            <UCard v-if="settingsTab === 'students'" class="flex flex-col flex-1 overflow-y-auto">
-                <div class="flex items-center mb-4">
-                    <div>
-                        <p><b>{{ availableSeats }}</b> 席に対して、現在の人数 <b>{{ students.length }}</b> 人</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。</p>
-                    </div>
-                    <div class="ml-auto">
-                        <UButton icon="i-heroicons-user-plus" label="メンバーの追加" color="primary" class="mr-2"
-                            @click="openStudentEdit()" />
-                        <UDropdown :items="[
-                            [
-                                {
-                                    label: 'かんたん一括挿入',
-                                    icon: 'i-heroicons-clipboard-document-list',
-                                    click: openStudentEasyInput,
-                                },
-                                {
-                                    label: 'インポート',
-                                    icon: 'i-heroicons-arrow-up-tray',
-                                    click: importFromCSV,
-                                },
-                                {
-                                    label: 'エクスポート',
-                                    icon: 'i-heroicons-arrow-down-tray',
-                                    click: exportToCSV,
-                                },
-                            ],
-                            [
-                                {
-                                    label: 'CSVひな型ダウンロード',
-                                    icon: 'i-heroicons-arrow-down-tray',
-                                    click: downloadCSV,
-                                }
-                            ]
-                        ]">
-                            <UButton icon="i-heroicons-chevron-down-20-solid" color="gray" />
-                        </UDropdown>
-                    </div>
-                </div>
-                <UTable :columns="[
-                    { key: 'studentId', label: '出席番号' },
-                    { key: 'name', label: '名前' },
-                    { key: 'fixed', label: '固定配置' },
-                    { key: 'condition', label: '優先配置' },
-                    { key: 'actions' },
-                ]" :rows="students">
-                    <template #fixed-data="{ row }" class="w-auto">
-                        {{ row.seat !== undefined ? 'あり' : 'なし' }}
-                    </template>
-                    <template #condition-data="{ row }" class="w-auto">
-                        <!-- @vue-ignore -->
-                        {{ Object.values(row?.chooseOptions ?? {}).some((e) => ['left', 'right', 'front', 'rear'].includes(e ?? '')) ? 'あり' : 'なし' }}
-                    </template>
-                    <template #actions-data="{ row }" class="w-auto">
-                        <UDropdown :items="studentActionItems(row)">
-                            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
-                        </UDropdown>
-                    </template>
-                </UTable>
-            </UCard>
-
-            <UCard v-if="settingsTab === 'exec'">
-                <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto p-1 bg-white dark:bg-slate-950" :class="isFullScreen && 'p-6 justify-center'">
-                    <div class="mb-4 flex space-x-2 justify-center">
-                        <USelect v-model="effect" option-attribute="name"
-                            :options="[{ name: 'エフェクトなし', value: 'none' }, { name: 'スロット', value: 'slot' }, { name: 'カウントダウン', value: 'timer' }]" />
-                        <UButton color="primary" variant="solid" label="席替え実施" :disabled="effectState === 'running'"
-                            @click="execSekigae()" />
-                        <div class="border-l"></div>
-                        <UButton color="white" label="全画面表示（解除）" @click="toggleFullScreen()" />
-                    </div>
-                    <div class="relative overflow-hidden mb-4">
-                        <SeatRenderer id="seats" :classroom="classroom" :seats="resultForRendering" :lg="isFullScreen" />
-                        <div v-for="n of 3" :class="['absolute z-10 text-5xl lg:text-9xl font-bold top-1/2 left-1/2 opacity-0 text-red-500 select-none pointer-events-none', timerCount === n && $style.countAnim]">{{ n }}</div>
-                    </div>
-                    <div class="flex space-x-2 justify-center">
-                        <UButton v-if="effect === 'slot' && effectState !== 'done'" color="primary" size="lg" variant="solid"
-                            label="ストップ！" :disabled="!slotSpinning" @click="slotSpinning = false" />
-                        <template v-else-if="effectState === 'done'">
-                            <UButton color="white" label="CSVでダウンロード" @click="exportResultToCSV()" />
-                        </template>
-                    </div>
-                    <UNotifications v-if="isFullScreen" />
-                </div>
-            </UCard>
+                <template #exec>
+                    <UCard>
+                        <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto p-1 bg-white dark:bg-slate-950" :class="isFullScreen && 'p-6 justify-center'">
+                            <div class="mb-4 flex space-x-2 justify-center">
+                                <USelect v-model="effect" option-attribute="name" :disabled="effectState === 'running'"
+                                    :options="[{ name: 'エフェクトなし', value: 'none' }, { name: 'スロット', value: 'slot' }, { name: 'カウントダウン', value: 'timer' }]" />
+                                <UButton color="primary" variant="solid" label="席替え実施" :disabled="effectState === 'running'"
+                                    @click="execSekigae()" />
+                                <div class="border-l"></div>
+                                <UButton color="white" label="全画面表示（解除）" @click="toggleFullScreen()" />
+                            </div>
+                            <div class="relative mb-4" :class="isFullScreen ? 'overflow-y-auto' : 'overflow-hidden'">
+                                <SeatRenderer id="seats" :classroom="classroom" :seats="resultForRendering" :show-row-col="false" :lg="isFullScreen" />
+                                <div v-for="n of 3" :class="['absolute z-10 text-5xl lg:text-9xl font-bold top-1/2 left-1/2 opacity-0 text-red-500 select-none pointer-events-none', timerCount === n && $style.countAnim]">{{ n }}</div>
+                            </div>
+                            <div class="flex space-x-2 justify-center">
+                                <UButton v-if="effect === 'slot' && effectState !== 'done'" color="primary" size="lg" variant="solid"
+                                    label="ストップ！" :disabled="!slotSpinning" @click="slotSpinning = false" />
+                                <template v-else-if="effectState === 'done'">
+                                    <UButton color="white" label="CSVでダウンロード" @click="exportResultToCSV()" />
+                                </template>
+                            </div>
+                            <UNotifications v-if="isFullScreen" />
+                        </div>
+                    </UCard>
+                </template>
+            
+            </UTabs>
 
             <UModal v-model="modalIsOpen" @close="resetStudentEdit()">
                 <UCard v-if="modalState === 'studentEdit'"
@@ -184,9 +187,13 @@
                             <button class="text-sm ml-1"
                                 @click="enableFixedPosition = !enableFixedPosition">固定配置を有効にする</button>
                         </div>
-                        <div v-if="enableFixedPosition">
-                            <SeatSelector :classroom="classroom" :initial="currentEditObject.seat"
+                        <div v-if="enableFixedPosition" class="pb-2">
+                            <SeatSelector :classroom="classroom" :initial="currentEditObject.seat" :disabled-seats="manuallySelectedSeats"
                                 @change="studentEditSeatHandler" />
+                            <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                                このメンバーを配置する席を、座席表からクリックして選択してください。<br>
+                                【確保】となっている場合は、すでに他のメンバーが座席指定をしているため選択できません。
+                            </div>
                         </div>
                         <div class="py-1 flex items-center">
                             <UToggle v-model="enableCondition" />
@@ -240,7 +247,7 @@
                                 @click="modalState = null" />
                         </div>
                     </template>
-                    <UFormGroup name="students" label="メンバーの名前（一人ずつ改行で入力）" help="すでにメンバーが居る場合は、その出席番号に続けて末尾に挿入されます。">
+                    <UFormGroup name="students" label="メンバーの名前（一人ずつ改行で入力）" :ui="{ help: 'mt-2 text-sm text-gray-500 dark:text-gray-400' }" help="すでにメンバーが居る場合は、その出席番号に続けて末尾に挿入されます。">
                         <UTextarea :autofocus="true" :rows="10" v-model="studentEasyInput" />
                     </UFormGroup>
                     <template #footer>
@@ -285,7 +292,21 @@
 import type { Classroom, Student, Seat } from '@/lib/sekigae';
 import { arrangeSeats, assignSeats, getSeatNumber } from '@/lib/sekigae';
 
-const settingsTab = ref<'classroom' | 'students' | 'exec'>('classroom');
+const settingsTab = [
+    {
+        slot: 'classroom',
+        label: '①座席の配置'
+    },
+    {
+        slot: 'students',
+        label: '②メンバーの情報'
+    },
+    {
+        slot: 'exec',
+        label: '③席替え実行'
+    }
+];
+const settingsTabIndex = ref<number>();
 
 const modalState = ref<null | 'studentEdit' | 'easyInput'>(null);
 const modalIsOpen = ref<boolean>(false);
@@ -306,6 +327,7 @@ const classroom = ref<Classroom>([
     [true, true, true, true, true],
 ]);
 const availableSeats = computed(() => classroom.value.map((row) => row.reduce((p, c) => p + (c ? 1 : 0), 0)).reduce((p, c) => p + c));
+const manuallySelectedSeats = computed<Seat[]>(() => students.value.map((e) => e.seat ? e.seat : null).filter<Seat>((e) => e !== null));
 
 function addRow() {
     classroom.value.push(new Array(classroom.value[0].length).fill(true));
@@ -351,11 +373,14 @@ function execStudentEasyInput() {
 // StudentEasyInput END
 
 // CSVUpload START
+const isUploadingCSV = ref<boolean>(false);
+
 function downloadCSV() {
     if (process.client) {
         const a = document.createElement('a');
         a.download = 'csvTemplate.csv';
         a.href = '/static/csvTemplate.csv';
+        a.target = '_blank';
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -371,6 +396,8 @@ function importFromCSV() {
             if (!ev.target) {
                 return;
             }
+            isUploadingCSV.value = true;
+
             //@ts-ignore
             const file = ev.target.files as FileList;
             const reader = new FileReader();
@@ -438,9 +465,11 @@ function importFromCSV() {
                     } else {
                         alert("CSVの読み込み中にエラーが発生しました。");
                     }
+                    isUploadingCSV.value = false;
                 });
             } catch (e) {
-                alert("CSVの読み込み中にエラーが発生しました。");
+                alert("CSVの読み込み中にエラーが発生しました。\nCSVを読み込めません。ファイル形式を確認してください。\n文字コードを「UTF-8」にして保存してください。");
+                isUploadingCSV.value = false;
             }
         });
         document.body.appendChild(file);
