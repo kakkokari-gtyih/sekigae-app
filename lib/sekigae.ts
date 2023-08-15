@@ -44,11 +44,14 @@ function shuffleArray<T>(array: T[]): T[] {
  * @param classroom 座席配置の二次元配列
  * @returns 座席定義の配列
  */
-function getAvailableSeats(classroom: Classroom): Seat[] {
+function getAvailableSeats(classroom: Classroom, ignore: Seat[] = []): Seat[] {
+    const ignoreCols = ignore.map((v) => v.col);
+    const ignoreRows = ignore.map((v) => v.row);
+
     const seats: Seat[] = [];
     for (let row = 0; row < classroom.length; row++) {
         for (let col = 0; col < classroom[row].length; col++) {
-            if (classroom[row][col]) {
+            if (classroom[row][col] && !(ignoreCols.includes(col) && ignoreRows.includes(row))) {
                 seats.push({ row, col });
             }
         }
@@ -76,12 +79,14 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
         const bOptions = b.chooseOptions || {};
 
         const aPriority =
+            (a.seat ? 16 : 0) +
             (aOptions.y === 'front' ? 8 : 0) +
             (aOptions.y === 'rear' ? 4 : 0) +
             (aOptions.x === 'left' ? 2 : 0) +
             (aOptions.x === 'right' ? 1 : 0);
 
         const bPriority =
+            (b.seat ? 16 : 0) +
             (bOptions.y === 'front' ? 8 : 0) +
             (bOptions.y === 'rear' ? 4 : 0) +
             (bOptions.x === 'left' ? 2 : 0) +
