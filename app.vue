@@ -9,13 +9,11 @@ async function getLocaleMessage(fn: typeof setLocaleMessage, locale: string) {
     fn(locale, messages);   
 }
 
-(async () => {
-    await getLocaleMessage(setLocaleMessage, locale.value);
-})();
-
 watch(locale, async (to) => {
     await getLocaleMessage(setLocaleMessage, to);
-})
+}, {
+    immediate: true
+});
 
 const route = useRoute();
 const baseUrl = useRuntimeConfig().public.baseUrl as string;
