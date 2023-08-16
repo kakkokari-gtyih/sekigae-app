@@ -1,7 +1,22 @@
 <script setup lang="ts">
 import type { Graph, Thing } from 'schema-dts';
 
-const { t, locale } = useI18n();
+const { t, locale, setLocaleMessage } = useI18n();
+
+async function getLocaleMessage(fn: typeof setLocaleMessage, locale: string) {
+    const messages = await import(`@/locales/${locale}.json`);
+    
+    fn(locale, messages);   
+}
+
+(async () => {
+    await getLocaleMessage(setLocaleMessage, locale.value);
+})();
+
+watch(locale, async (to) => {
+    await getLocaleMessage(setLocaleMessage, to);
+})
+
 const route = useRoute();
 const baseUrl = useRuntimeConfig().public.baseUrl as string;
 
