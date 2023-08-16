@@ -3,7 +3,6 @@ import type { Graph, Thing } from 'schema-dts';
 
 const { t, locale } = useI18n();
 const route = useRoute();
-const colorMode = useColorMode();
 const baseUrl = useRuntimeConfig().public.baseUrl as string;
 
 const getDescription = (): string => {
@@ -81,7 +80,7 @@ useHead((): Record<string, any> => ({
         {
             property: "og:image",
             // TODO
-            content: () => route.meta.thumbnail ? route.meta.thumbnail : `${baseUrl}/img/logo.jpg`,
+            content: () => route.meta.thumbnail ? route.meta.thumbnail : `${baseUrl}/img/logo.png`,
         },
         ...(head.value.meta?.map((e) => ({ property: e.property, content: e.content, })) || []),
     ],
