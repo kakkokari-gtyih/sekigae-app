@@ -2,21 +2,26 @@
     <div class="w-full grid gap-1" :style="`grid-template-columns: ${showRowCol ? 'auto ' : ''}repeat(${classroom.length}, 1fr)`">
         <div :style="`grid-column: ${showRowCol ? '2' : '1'} / ${classroom.length + (showRowCol ? 2 : 1)}`" class="text-center font-bold p-1" :class="lg ? 'text-3xl' : 'text-xl'">
             <UIcon name="i-heroicons-arrow-small-up" style="height: 1em; width: 1em; vertical-align: -.125em;" />
-            前
+            {{ $t('seatSelector.front') }}
             <UIcon name="i-heroicons-arrow-small-up" style="height: 1em; width: 1em; vertical-align: -.125em;" />
         </div>
         <div v-if="showRowCol" class="space-y-1 grid grid-cols-1 h-full">
             <div :class="lg ? 'h-16' : 'h-12'"></div>
             <div v-for="seat, i in classroom[0]" class="relative flex after:border-transparent after:border-l-sky-200 dark:after:border-l-sky-800" :class="lg ? 'after:border-y-[50px] after:border-l-[30px]' : 'after:border-y-[30px] after:border-l-[20px]'">
                 <div class="bg-sky-200 dark:bg-sky-800 pl-1 rounded-l-lg text-center font-bold" :class="lg ? 'text-2xl' : ''" style="writing-mode: vertical-rl;">
-                    <span style="writing-mode: horizontal-tb; line-height: 1.1;">{{ i + 1 }}</span>列
+                    <template v-if="locale === 'ja'">
+                        <span style="writing-mode: horizontal-tb; line-height: 1.1;">{{ i + 1 }}</span>列
+                    </template>
+                    <template v-else>
+                        {{ $t('seatSelector.col', { row: getAlphabetCode(i + 1) }) }}
+                    </template>
                 </div>
             </div>
         </div>
         <div v-for="row, i in classroom" class="space-y-1">
             <div v-if="showRowCol" class="relative flex flex-col items-center after:h-full after:border-transparent after:border-t-sky-200 dark:after:border-t-sky-800 after:border-t-[16px]" :class="lg ? 'after:w-[60px] after:border-x-[30px]' : 'after:w-[40px] after:border-x-[20px]'">
                 <div class="w-full text-center p-1 font-bold rounded-lg bg-sky-200 dark:bg-sky-800" :class="lg ? 'text-2xl py-2' : ''">
-                    {{ getAlphabetCode(i + 1) }}席
+                    {{ $t('seatSelector.row', { row: getAlphabetCode(i + 1) }) }}
                 </div>
             </div>
             <template v-if="!editable || !realSeats" v-for="seat, j in row">
@@ -79,6 +84,7 @@ const props = withDefaults(defineProps<{
 const emits = defineEmits<{
     (event: 'changeSeat', to: ClassroomWithStudents): void;
 }>();
+const { locale } = useI18n();
 
 function getRealSeats(seats: ClassroomWithStudents): (Student | { studentId: number; })[][] {
     if (!seats) {

@@ -11,10 +11,12 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxthq/ui": "^2.7.0",
+    "@nuxtjs/i18n": "8.0.0-rc.2",
     "@types/encoding-japanese": "^2.0.1",
     "@types/node": "^18.16.19",
     "encoding-japanese": "^2.0.0",
     "nuxt": "^3.6.5",
+    "sitemap": "^7.1.1",
     "vuedraggable": "^4.1.0"
   }
 }
