@@ -1,25 +1,25 @@
 {
     "common": {
-        "loading": "読み込み中…",
+        "loading": "Loading…",
         "title": "Sekigae.app - 高機能席替えアプリ",
         "description": "座席位置の希望（固定・前方/後方/左右）をかなえる席替えが可能です。",
         "nav": {
-            "terms": "利用規約",
-            "helpTranslate": "翻訳を手伝う",
-            "tondabayashiHs": "富田林高校HP"
+            "terms": "Terms of Service",
+            "helpTranslate": "Help Translate",
+            "tondabayashiHs": "Tondabayashi High School"
         }
     },
     "tabs": {
-        "classroom": "①座席の配置",
-        "students": "②メンバーの情報",
-        "exec": "③席替え実行"
+        "classroom": "① Seat Arrangement",
+        "students": "② Members' Information",
+        "exec": "③ Perform a Seat Change"
     },
     "classroom": {
-        "colRow": "{col} 列 × {row} 行 選択済み: {seatCount} 席（生徒数: {studentCount} 人）",
-        "description": "教室のタテ・ヨコの机の数と合わせたあと、存在しない席を選択して灰色にしてください。"
+        "colRow": "Range: {col} × {row} / {seatCount} seats selected ({studentCount} members registered)",
+        "description": "Align the number of desks with the number of vertical and horizontal desks in the classroom, then select the seats that do not exist and gray them out."
     },
     "students": {
-        "seatsAndStudents": "座席数 {seatCount} 席に対して、現在の人数 {studentCount} 人",
+        "seatsAndStudents": "Seating capacity: {seatCount} seats vs. current capacity of {studentCount}",
         "description": "右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。",
         "privacy": "このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。",
         "studentEdit": {
