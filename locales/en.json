@@ -1,8 +1,8 @@
 {
     "common": {
         "loading": "Loading…",
-        "title": "Sekigae.app - 高機能席替えアプリ",
-        "description": "座席位置の希望（固定・前方/後方/左右）をかなえる席替えが可能です。",
+        "title": "Sekigae.app - High-Function Seating Arrangement App",
+        "description": "Achieve seat arrangements based on seat preference (fixed, front/back, left/right) with Sekigae.app!",
         "nav": {
             "terms": "Terms of Service",
             "helpTranslate": "Help Translate",
@@ -11,7 +11,7 @@
     },
     "tabs": {
         "classroom": "① Seat Arrangement",
-        "students": "② Members' Information",
+        "students": "② Member Information",
         "exec": "③ Perform a Seat Change"
     },
     "classroom": {
@@ -19,126 +19,126 @@
         "description": "Align the number of desks with the number of vertical and horizontal desks in the classroom, then select the seats that do not exist and gray them out."
     },
     "students": {
-        "seatsAndStudents": "Seating capacity: {seatCount} seats vs. current capacity of {studentCount}",
-        "description": "右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。",
-        "privacy": "このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。",
+        "seatsAndStudents": "{studentCount} Students out of {seatCount} Seats",
+        "description": "Register members for seat rearrangement using 'Add Member' on the right, or import member data from a CSV list.",
+        "privacy": "This program runs entirely in your browser, ensuring that your input data stays within your device and does not go online.",
         "studentEdit": {
-            "title": "メンバーの追加",
-            "modalTitle": "メンバーの追加 / 編集",
-            "optional": "任意",
-            "studentId": "出席番号",
-            "name": "名前",
-            "furigana": "ふりがな",
+            "title": "Add Member",
+            "modalTitle": "Add / Edit Member",
+            "optional": "Optional",
+            "studentId": "Attendance Number",
+            "name": "Name",
+            "furigana": "Furigana (JA)",
             "fixedPosition": {
-                "switch": "固定配置を有効にする",
-                "description": "このメンバーを配置する席を、座席表からクリックして選択してください。【確保】となっている場合は、すでに他のメンバーが座席指定をしているため選択できません。"
+                "switch": "Enable Fixed Position",
+                "description": "Click to select a seat for this member from the seating chart. Seats marked 'Reserved' are unavailable due to other member seat assignments."
             },
             "condition": {
-                "switch": "優先配置を有効にする",
-                "xLeft": "左側優先",
-                "xRight": "右側優先",
-                "xNone": "左右の希望なし",
-                "yFront": "前方優先",
-                "yRear": "後方優先",
-                "yNone": "前後の希望なし",
-                "disclaimerTitle": "【免責事項】",
-                "disclaimer": "席の割り当ては、上記の設定に基づいて行われますが、条件に反した席が選ばれる可能性があります。希望に基づいて席を割り当てるために優先順位を考慮していますが、希望に合致する席が利用可能な場合にのみ割り当てが行われるため、利用可能な席が希望に合致しない場合や、席が不足している場合には、条件に反した席が選ばれる可能性があります。"
+                "switch": "Enable Priority Placement",
+                "xLeft": "Prefer Seat on Left Side",
+                "xRight": "Prefer Seat on Right Side",
+                "xNone": "No Left/Right Preference",
+                "yFront": "Prefer Front Seating",
+                "yRear": "Prefer Rear Seating",
+                "yNone": "No Front/Back Preference",
+                "disclaimerTitle": "[Disclaimer]",
+                "disclaimer": "Seat assignments are made based on the above settings. While efforts are made to accommodate preferences, it's possible that seats might not match the specified conditions. Assignments are only made if matching seats are available. If matching seats are unavailable due to shortage or other reasons, assignments may deviate from preferences."
             },
-            "duplicateStudentId": "出席番号が重複しています"
+            "duplicateStudentId": "Duplicate Attendance Number"
         },
         "studentEasyInput": {
-            "title": "かんたん一括挿入",
-            "label": "メンバーの名前（一人ずつ改行で入力）",
-            "help": "すでにメンバーが居る場合は、その出席番号に続けて末尾に挿入されます。"
+            "title": "Easy Bulk Insert",
+            "label": "Member Names (One per line)",
+            "help": "New members will be appended after existing ones, if any."
         },
         "importFromCSV": {
-            "title": "CSVインポート",
-            "error": "CSVの読み込み中にエラーが発生しました。",
-            "cannotLoadCSV": "CSVを読み込めません。ファイル形式を確認してください。\n文字コードを「UTF-8」にして保存してください。"
+            "title": "CSV Import",
+            "error": "Error occurred during CSV import.",
+            "cannotLoadCSV": "Cannot load CSV. Please check the file format and save it as 'UTF-8' encoding."
         },
         "exportToCSV": {
-            "title": "エクスポート",
+            "title": "Export",
             "noStudents": {
-                "title": "メンバー情報がありません",
-                "description": "メンバーを追加してからエクスポートしてください"
+                "title": "No Member Information",
+                "description": "Please add members before exporting."
             }
         },
         "downloadCSVTemplate": {
-            "title": "CSVひな型ダウンロード"
+            "title": "Download CSV Template"
         },
         "table": {
             "cols": {
-                "studentId": "出席番号",
-                "name": "名前",
-                "fixed": "固定配置",
-                "condition": "優先配置"
+                "studentId": "Attendance Number",
+                "name": "Name",
+                "fixed": "Fixed Position",
+                "condition": "Priority Placement"
             },
             "empty": {
-                "description": "メンバーが誰も追加されていません。"
+                "description": "No members have been added yet."
             },
             "actions": {
-                "edit": "編集",
-                "delete": "削除"
+                "edit": "Edit",
+                "delete": "Delete"
             },
-            "yes": "あり",
-            "no": "なし"
+            "yes": "Yes",
+            "no": "No"
         },
-        "save": "保存",
-        "cancel": "キャンセル"
+        "save": "Save",
+        "cancel": "Cancel"
     },
     "exec": {
         "canExec": {
-            "title": "席替えを実行できます。",
-            "description1": "演出エフェクトを選んで、「席替え実施」をクリックしてください。「全画面表示」はスクリーンへの投影などに便利です。",
-            "description2": "席替え実施後、座席をドラッグアンドドロップすることで並べ替えが可能です。並べ替えたデータはCSVでの出力データにも反映されます。"
+            "title": "Ready to Execute Seating",
+            "description1": "Choose an effect and click 'Perform Seating.' Fullscreen mode is useful for projection purposes.",
+            "description2": "After executing seating, you can rearrange seats by drag-and-drop. Rearranged data will be reflected in the exported CSV."
         },
         "cannotExec": {
-            "title": "席替えを実行できません。",
-            "toastTitle": "メンバー数と座席数が合いません",
-            "description1": "座席数とメンバーの人数を合致させてください。"
+            "title": "Cannot Execute Seating",
+            "toastTitle": "Mismatched Member and Seat Counts",
+            "description1": "Please ensure the number of seats matches the number of members."
         },
         "effects": {
             "none": {
-                "title": "エフェクトなし"
+                "title": "No Effect"
             },
             "slot": {
-                "title": "スロット",
-                "stop": "ストップ！"
+                "title": "Slot Machine",
+                "stop": "Stop!"
             },
             "timer": {
-                "title": "カウントダウン"
+                "title": "Countdown"
             }
         },
         "actions": {
-            "exec": "席替え実行",
-            "fullscreen": "全画面表示",
-            "exitFullscreen": "全画面表示を解除",
-            "downloadResultCSV": "CSVでダウンロード"
+            "exec": "Perform Seating",
+            "fullscreen": "Fullscreen",
+            "exitFullscreen": "Exit Fullscreen",
+            "downloadResultCSV": "Download as CSV"
         },
         "options": {
-            "title": "オプション",
-            "showRowCol": "座席位置（席番号）表示",
-            "editable": "ドラッグアンドドロップ無効"
+            "title": "Options",
+            "showRowCol": "Show Seat Position (Seat Number)",
+            "editable": "Disable Drag-and-Drop"
         },
         "downloadResultCSV": {
             "noData": {
-                "title": "データがありません",
-                "description": "席替えを実施していない場合は実施してからダウンロードしてください"
+                "title": "No Data Available",
+                "description": "Perform seating before downloading."
             }
         }
     },
     "csvSyntax": {
-        "headerIdentifier": "出席番号",
-        "templateHeaderRow": "出席番号,名前,ふりがな,\"左右の希望（L または R で記入。L＝左, R＝右）\",\"前後の希望（F または R で記入。F＝前, R＝後ろ）\",座席指定（左からr番目・前からc番目のとき→[r_c]のようにアンダーバーで区切る）",
-        "resultHeaderRow": "出席番号,名前,ふりがな,左右の希望,前後の希望,座席指定を流用する場合はこの列を削除,座席指定(R_C),行,列,座席通し番号(左前から)"
+        "headerIdentifier": "Attendance Number",
+        "templateHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference (Enter L or R. L = Left, R = Right)\",\"Front/Back Preference (Enter F or R. F = Front, R = Rear)\",\"Assigned Seat (Format: [r_c] for row and column)\"",
+        "resultHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference\",\"Front/Back Preference\",\"If reusing assigned seats, delete this column\",\"Assigned Seat (R_C)\",Row,Column,\"Sequential Seat Number (Top left to bottom right)\""
     },
     "seatSelector": {
-        "front": "前",
-        "addRow": "行を追加",
-        "addCol": "列を追加",
-        "cannotDeleteAnymore": "これ以上削除できません",
-        "occupied": "確保",
-        "col": "{col} 列",
-        "row": "{row} 席"
+        "front": "Front",
+        "addRow": "Add Row",
+        "addCol": "Add Column",
+        "cannotDeleteAnymore": "Cannot Delete Further",
+        "occupied": "Reserved",
+        "col": "{col}",
+        "row": "{row}"
     }
 }
