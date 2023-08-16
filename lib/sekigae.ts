@@ -1,8 +1,8 @@
 /** 座席 */
 export type Seat = {
-    /** 列 */
+    /** 列（左からn番目） */
     row: number | null;
-    /** 行 */
+    /** 行（前からn番目） */
     col: number | null;
 };
 

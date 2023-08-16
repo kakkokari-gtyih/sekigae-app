@@ -880,7 +880,7 @@ function exportResultToCSV() {
         (e.seat) ? (e.seat.row + 1) : '',
         (e.seat) ? (e.seat.col + 1) : '',
         (e.seat) ? getSeatNumber(e.seat, classroom.value).toString() : '',
-        (e.seat) ? [(e.seat.col + 1), (e.seat.row + 1)].join('_') : '',
+        (e.seat) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
     ].map((f) => `"${f}"`).join(','));
     out.unshift('出席番号,名前,ふりがな,行,列,座席通し番号,座席指定(R_C)');
     downloadCSVFile(out.join('\r\n'), 'sekigaeResult.csv');
