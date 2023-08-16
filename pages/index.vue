@@ -16,6 +16,7 @@
 
             <UTabs
                 :items="settingsTab"
+                :orientation="(screenWidth >= 640) ? 'horizontal' : 'vertical'"
                 v-model="settingsTabIndex"
                 :ui="{
                     list: {
@@ -29,13 +30,13 @@
                 <template #classroom>
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="mb-4">
-                            <I18nT keypath="classroom.colRow" tag="p" class="text-lg">
+                            <I18nT keypath="classroom.colRow" tag="p" class="sm:text-lg">
                                 <template #col><b>{{ classroom.length }}</b></template>
                                 <template #row><b>{{ classroom[0].length }}</b></template>
                                 <template #seatCount><b>{{ availableSeats }}</b></template>
                                 <template #studentCount><b>{{ students.length }}</b></template>
                             </I18nT>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('classroom.description') }}</p>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('classroom.description') }}</p>
                         </div>
                         <div class="w-full grid gap-1" :style="`grid-template-columns: auto repeat(${classroom.length}, 1fr) auto`">
                             <div :style="`grid-column: 1 / ${classroom.length + 3}`" class="text-center text-lg font-bold p-1">
@@ -74,16 +75,16 @@
 
                 <template #students>
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
-                        <div class="flex items-center mb-4">
-                            <div>
-                                <I18nT keypath="students.seatsAndStudents" tag="p" class="text-lg">
+                        <div class="flex flex-col sm:flex-row items-center mb-4">
+                            <div class="mb-4 sm:mb-0">
+                                <I18nT keypath="students.seatsAndStudents" tag="p" class="sm:text-lg">
                                     <template #seatCount><b>{{ availableSeats }}</b></template>
                                     <template #studentCount><b>{{ students.length }}</b></template>
                                 </I18nT>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('students.description') }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('students.privacy') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('students.description') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('students.privacy') }}</p>
                             </div>
-                            <div class="ml-auto">
+                            <div class="flex-shrink-0 sm:ml-auto">
                                 <UButton icon="i-heroicons-user-plus" :label="$t('students.studentEdit.title')" color="primary" class="mr-2"
                                     @click="openStudentEdit()" />
                                 <UDropdown :items="[
@@ -128,8 +129,8 @@
                             :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: $t('common.loading') }"
                             :loading="isUploadingCSV"
                             :ui="{
-                                th: { size: 'text-base' },
-                                td: { size: 'text-base' },
+                                th: { size: 'sm:text-base' },
+                                td: { size: 'sm:text-base' },
                             }">
                             <template #empty-state>
                                 <div class="flex flex-col items-center justify-center py-6 space-y-3">
@@ -170,17 +171,17 @@
                     <UCard>
                         <div class="mb-4">
                             <template v-if="availableSeats === students.length">
-                                <p class="text-lg font-bold text-primary-500">{{ $t('exec.canExec.title') }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.canExec.description1') }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.canExec.description2') }}</p>
+                                <p class="sm:text-lg font-bold text-primary-500">{{ $t('exec.canExec.title') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.canExec.description1') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.canExec.description2') }}</p>
                             </template>
                             <template v-else>
-                                <p class="text-lg font-bold text-red-700">{{ $t('exec.cannotExec.title') }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.cannotExec.description1') }}</p>
+                                <p class="sm:text-lg font-bold text-red-700">{{ $t('exec.cannotExec.title') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.cannotExec.description1') }}</p>
                             </template>
                         </div>
                         <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden p-1 bg-white dark:bg-slate-950" :class="isFullScreen && 'p-6 justify-center'">
-                            <div class="mb-4 flex space-x-2 justify-center">
+                            <div class="mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 justify-center">
                                 <USelect icon="i-heroicons-sparkles-solid" v-model="effect" option-attribute="name" :disabled="effectState === 'running'"
                                     :options="[{ name: $t('exec.effects.none.title'), value: 'none' }, { name: $t('exec.effects.slot.title'), value: 'slot' }, { name: $t('exec.effects.timer.title'), value: 'timer' }]" />
                                 <UButton color="primary" variant="solid" :label="$t('exec.actions.exec')" icon="i-heroicons-play" :disabled="effectState === 'running'"
@@ -188,7 +189,7 @@
                                 <div class="border-l"></div>
                                 <UButton color="white" :icon="isFullScreen ? 'i-heroicons-arrows-pointing-in' : 'i-heroicons-arrows-pointing-out'" :label="isFullScreen ? $t('exec.actions.exitFullscreen') : $t('exec.actions.fullscreen')" @click="toggleFullScreen()" />
                                 <UPopover>
-                                    <UButton color="white" :label="$t('exec.options.title')" trailing-icon="i-heroicons-chevron-down-20-solid" />
+                                    <UButton color="white" :block="true" :label="$t('exec.options.title')" trailing-icon="i-heroicons-chevron-down-20-solid" />
 
                                     <template #panel>
                                         <UCard>
@@ -256,7 +257,7 @@
                         <div v-if="enableFixedPosition" class="pb-2">
                             <SeatSelector :classroom="classroom" :initial="currentEditObject.seat" :disabled-seats="manuallySelectedSeats"
                                 @change="studentEditSeatHandler" />
-                            <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">{{ $t('students.studentEdit.fixedPosition.description') }}</div>
+                            <div class="mt-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('students.studentEdit.fixedPosition.description') }}</div>
                         </div>
                         <div class="py-1 flex items-center">
                             <UToggle v-model="enableCondition" />
@@ -285,7 +286,7 @@
                                 <URadio v-model="currentEditObject.chooseOptions.y" :value="null" name="chooseOptionsFB"
                                     :label="$t('students.studentEdit.condition.yNone')" />
                             </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                                 <span class="text-yellow-700 dark:text-yellow-400 font-bold">{{ $t('students.studentEdit.condition.disclaimerTitle') }}</span>
                                 {{ $t('students.studentEdit.condition.disclaimer') }}
                             </div>
@@ -310,7 +311,7 @@
                                 @click="modalState = null" />
                         </div>
                     </template>
-                    <UFormGroup name="students" :label="$t('students.studentEasyInput.label')" :ui="{ help: 'mt-2 text-sm text-gray-500 dark:text-gray-400' }" :help="$t('students.studentEasyInput.help')">
+                    <UFormGroup name="students" :label="$t('students.studentEasyInput.label')" :ui="{ help: 'mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400' }" :help="$t('students.studentEasyInput.help')">
                         <UTextarea :autofocus="true" :rows="10" v-model="studentEasyInput" />
                     </UFormGroup>
                     <template #footer>
@@ -924,8 +925,17 @@ function toggleFullScreen() {
 }
 // PostSekigae END
 
-// RouteGuard START
+// RouteGuard / WidthWatcher START
 const hasChanged = ref<boolean>(false);
+
+const screenWidth = ref<number>(1280);
+function adjustWidth() {
+    screenWidth.value = window.innerWidth;
+}
+if (process.client) {
+    adjustWidth();
+    window.addEventListener('resize', adjustWidth);
+}
 
 function nativeBeforeUnload(ev: Event) {
     ev.preventDefault();
@@ -941,6 +951,7 @@ onBeforeRouteLeave((to, from, next) => {
     const answer = !hasChanged.value || window.confirm(t('common.unsavedChanges'));
     if (answer) {
         window.removeEventListener('beforeunload', nativeBeforeUnload);
+        window.removeEventListener('resize', adjustWidth);
         next();
     } else {
         next(false);
