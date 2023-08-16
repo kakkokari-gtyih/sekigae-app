@@ -1,22 +1,24 @@
 <script setup lang="ts">
+import type { LocaleObject } from '@nuxtjs/i18n/dist/runtime/composables';
+import type { DropdownItem } from '@nuxthq/ui/dist/runtime/composables';
+
 const emit = defineEmits<{
     (event: 'toggleNav'): void;
 }>();
-const route = useRoute();
 
 const { locales } = useI18n();
 const switchLocalePath = useSwitchLocalePath();
 const localePath = useLocalePath();
 
 const items = computed(() => {
-    return locales.value.map((v) => ({
+    return (locales.value as LocaleObject[]).map<DropdownItem>((v) => ({
         label: v.name,
         to: switchLocalePath(v.code),
     }));
 })
 </script>
 <template>
-    <header class="h-[3.65rem] p-3 bg-white border-b dark:border-slate-400 fixed top-0 left-0 w-full z-10">
+    <header class="h-[3.65rem] p-3 bg-white border-b dark:border-slate-400 fixed top-0 left-0 z-[10000] w-full z-10">
         <div class="mx-auto max-w-screen-xl md:px-4 h-full flex items-center">
             <NuxtLink :to="localePath('/')" class="block h-full text-2xl font-bold">
                 Sekigae.app
@@ -29,7 +31,11 @@ const items = computed(() => {
                     :items="[
                         [...items],
                         [{
-                            label: $t('common.nav.helpTranslate')
+                            label: $t('common.nav.helpTranslate'),
+                            to: 'https://crowdin.com/project/sekigae-app',
+                            target: '_blank',
+                            icon: 'i-heroicons-arrow-top-right-on-square',
+                            iconClass: 'order-2 ml-auto',
                         }]
                     ]"
                     :popper="{ placement: 'bottom-end' }"

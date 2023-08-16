@@ -1,8 +1,9 @@
 {
     "common": {
         "loading": "Loading…",
-        "title": "Sekigae.app - High-Function Seating Arrangement App",
-        "description": "Achieve seat arrangements based on seat preference (fixed, front/back, left/right) with Sekigae.app!",
+        "title": "Sekigae.app - High-Function Seating Chart Creator",
+        "description": "Make perfect seating arrangements effortlessly, respecting your members' seat preferences (fixed, front/back, left/right), with Sekigae.app!",
+        "unsavedChanges": "If you navigate away from this page, all data, including student information and seating arrangement results, will be lost.\nBe sure to export and save any unsaved data. Do you want to proceed?",
         "nav": {
             "terms": "Terms of Service",
             "helpTranslate": "Help Translate",
@@ -15,7 +16,7 @@
         "exec": "③ Perform a Seat Change"
     },
     "classroom": {
-        "colRow": "Range: {col} × {row} / {seatCount} seats selected ({studentCount} members registered)",
+        "colRow": "Range: {col} × {row} / {seatCount} seats selected ({studentCount} members added)",
         "description": "Align the number of desks with the number of vertical and horizontal desks in the classroom, then select the seats that do not exist and gray them out."
     },
     "students": {

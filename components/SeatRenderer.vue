@@ -10,10 +10,10 @@
             <div v-for="seat, i in classroom[0]" class="relative flex after:border-transparent after:border-l-sky-200 dark:after:border-l-sky-800" :class="lg ? 'after:border-y-[50px] after:border-l-[30px]' : 'after:border-y-[30px] after:border-l-[20px]'">
                 <div class="bg-sky-200 dark:bg-sky-800 pl-1 rounded-l-lg text-center font-bold" :class="lg ? 'text-2xl' : ''" style="writing-mode: vertical-rl;">
                     <template v-if="locale === 'ja'">
-                        <span style="writing-mode: horizontal-tb; line-height: 1.1;">{{ i + 1 }}</span>列
+                        <span style="writing-mode: horizontal-tb; line-height: 1.1;">{{ i + 1 }}</span>席
                     </template>
                     <template v-else>
-                        {{ $t('seatSelector.col', { row: getAlphabetCode(i + 1) }) }}
+                        {{ $t('seatSelector.row', { row: (i + 1) }) }}
                     </template>
                 </div>
             </div>
@@ -21,7 +21,7 @@
         <div v-for="row, i in classroom" class="space-y-1">
             <div v-if="showRowCol" class="relative flex flex-col items-center after:h-full after:border-transparent after:border-t-sky-200 dark:after:border-t-sky-800 after:border-t-[16px]" :class="lg ? 'after:w-[60px] after:border-x-[30px]' : 'after:w-[40px] after:border-x-[20px]'">
                 <div class="w-full text-center p-1 font-bold rounded-lg bg-sky-200 dark:bg-sky-800" :class="lg ? 'text-2xl py-2' : ''">
-                    {{ $t('seatSelector.row', { row: getAlphabetCode(i + 1) }) }}
+                    {{ $t('seatSelector.col', { col: getAlphabetCode(i + 1) }) }}
                 </div>
             </div>
             <template v-if="!editable || !realSeats" v-for="seat, j in row">
