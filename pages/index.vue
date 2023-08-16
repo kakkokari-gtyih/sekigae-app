@@ -56,7 +56,7 @@
                                 <UButton :block="true" color="white" icon="i-heroicons-x-mark" @click="delCol(i)">
                                 </UButton>
                                 <button v-for="seat, j in row"
-                                    :class="['block w-full min-h-[60px] p-3', seat ? 'bg-yellow-200 dark:bg-yellow-600' : 'bg-gray-200 dark:bg-gray-800']"
+                                    :class="['block w-full min-h-[60px] p-3', seat ? 'bg-yellow-200 dark:bg-yellow-600' : 'bg-gray-200 dark:bg-gray-700']"
                                     @click="classroom[i][j] = !seat">
                                 </button>
                             </div>
@@ -180,7 +180,7 @@
                                 <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.cannotExec.description1') }}</p>
                             </template>
                         </div>
-                        <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden p-1 bg-white dark:bg-slate-950" :class="isFullScreen && 'p-6 justify-center'">
+                        <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden p-1 bg-white dark:bg-gray-900" :class="isFullScreen && 'p-6 justify-center'">
                             <div class="mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 justify-center">
                                 <USelect icon="i-heroicons-sparkles-solid" v-model="effect" option-attribute="name" :disabled="effectState === 'running'"
                                     :options="[{ name: $t('exec.effects.none.title'), value: 'none' }, { name: $t('exec.effects.slot.title'), value: 'slot' }, { name: $t('exec.effects.timer.title'), value: 'timer' }]" />
