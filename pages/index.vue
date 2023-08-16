@@ -1,6 +1,14 @@
 <template>
     <div>
-        <UContainer class="mt-5 space-y-6">
+        <UContainer class="relative mt-5 space-y-6">
+            <div :class="['fixed top-0 left-0 w-screen h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 z-[300] flex items-center transition-opacity duration-300', {'opacity-0 pointer-events-none': isMounted}]">
+                <div class="w-full text-center font-bold text-2xl">
+                    <div class="flex justify-center mb-5">
+                        <div class="animate-spin h-10 w-10 border-4 border-primary-500 rounded-full border-t-transparent"></div>
+                    </div>
+                    読み込み中…
+                </div>
+            </div>
             <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-200">
                 高機能席替えアプリ
             </h1>
@@ -10,8 +18,8 @@
                 <template #classroom>
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="mb-4">
-                            <p><b>{{ classroom[0].length }}</b> 列 × <b>{{ classroom.length }}</b> 行&emsp;選択済み: <b>{{ availableSeats }}</b> 席 （生徒数: <b>{{ students.length }}</b> 人）</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">教室のタテ・ヨコの机の数と合わせたあと、存在しない席を選択して灰色にしてください。</p>
+                            <p class="text-lg"><b>{{ classroom[0].length }}</b> 列 × <b>{{ classroom.length }}</b> 行&emsp;選択済み: <b>{{ availableSeats }}</b> 席 （生徒数: <b>{{ students.length }}</b> 人）</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">教室のタテ・ヨコの机の数と合わせたあと、存在しない席を選択して灰色にしてください。</p>
                         </div>
                         <div class="w-full grid gap-1" :style="`grid-template-columns: auto repeat(${classroom.length}, 1fr) auto`">
                             <div :style="`grid-column: 1 / ${classroom.length + 3}`" class="text-center text-lg font-bold p-1">
@@ -53,9 +61,9 @@
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="flex items-center mb-4">
                             <div>
-                                <p>座席数 <b>{{ availableSeats }}</b> 席に対して、現在の人数 <b>{{ students.length }}</b> 人</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。</p>
+                                <p class="text-lg">座席数 <b>{{ availableSeats }}</b> 席に対して、現在の人数 <b>{{ students.length }}</b> 人</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。</p>
                             </div>
                             <div class="ml-auto">
                                 <UButton icon="i-heroicons-user-plus" label="メンバーの追加" color="primary" class="mr-2"
@@ -100,7 +108,11 @@
                             ]"
                             :rows="students"
                             :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: '読み込み中…' }"
-                            :loading="isUploadingCSV">
+                            :loading="isUploadingCSV"
+                            :ui="{
+                                th: { size: 'text-base' },
+                                td: { size: 'text-base' },
+                            }">
                             <template #empty-state>
                                 <div class="flex flex-col items-center justify-center py-6 space-y-3">
                                     <p class="text-sm text-center">
@@ -116,11 +128,16 @@
                                 </div>
                             </template>
                             <template #fixed-data="{ row }" class="w-auto">
-                                {{ row.seat !== undefined ? 'あり' : 'なし' }}
+                                <div :class="row.seat !== undefined && 'font-bold'">
+                                    {{ row.seat !== undefined ? 'あり' : 'なし' }}
+                                </div>
                             </template>
                             <template #condition-data="{ row }" class="w-auto">
                                 <!-- @vue-ignore -->
-                                {{ Object.values(row?.chooseOptions ?? {}).some((e) => ['left', 'right', 'front', 'rear'].includes(e ?? '')) ? 'あり' : 'なし' }}
+                                <div :class="Object.values(row?.chooseOptions ?? {}).some((e) => ['left', 'right', 'front', 'rear'].includes(e ?? '')) && 'font-bold'">
+                                    <!-- @vue-ignore -->
+                                    {{ Object.values(row?.chooseOptions ?? {}).some((e) => ['left', 'right', 'front', 'rear'].includes(e ?? '')) ? 'あり' : 'なし' }}
+                                </div>
                             </template>
                             <template #actions-data="{ row }" class="w-auto">
                                 <UDropdown :items="studentActionItems(row)">
@@ -133,24 +150,55 @@
 
                 <template #exec>
                     <UCard>
+                        <div class="mb-4">
+                            <template v-if="availableSeats === students.length">
+                                <p class="text-lg font-bold text-primary-500">席替えを実行できます。</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">演出エフェクトを選んで、「席替え実施」をクリックしてください。「全画面表示」はスクリーンへの投影などに便利です。</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">席替え実施後、座席をドラッグアンドドロップすることで並べ替えが可能です。並べ替えたデータはCSVでの出力データにも反映されます。</p>
+                            </template>
+                            <template v-else>
+                                <p class="text-lg font-bold text-red-700">席替えを実行できません。</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">座席数とメンバーの人数を合致させてください。</p>
+                            </template>
+                        </div>
                         <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto p-1 bg-white dark:bg-slate-950" :class="isFullScreen && 'p-6 justify-center'">
                             <div class="mb-4 flex space-x-2 justify-center">
-                                <USelect v-model="effect" option-attribute="name" :disabled="effectState === 'running'"
+                                <USelect icon="i-heroicons-sparkles-solid" v-model="effect" option-attribute="name" :disabled="effectState === 'running'"
                                     :options="[{ name: 'エフェクトなし', value: 'none' }, { name: 'スロット', value: 'slot' }, { name: 'カウントダウン', value: 'timer' }]" />
-                                <UButton color="primary" variant="solid" label="席替え実施" :disabled="effectState === 'running'"
+                                <UButton color="primary" variant="solid" label="席替え実施" icon="i-heroicons-play" :disabled="effectState === 'running'"
                                     @click="execSekigae()" />
                                 <div class="border-l"></div>
-                                <UButton color="white" label="全画面表示（解除）" @click="toggleFullScreen()" />
+                                <UButton color="white" :icon="isFullScreen ? 'i-heroicons-arrows-pointing-in' : 'i-heroicons-arrows-pointing-out'" :label="isFullScreen ? '全画面表示を解除' : '全画面表示'" @click="toggleFullScreen()" />
+                                <UPopover>
+                                    <UButton color="white" label="その他のオプション" trailing-icon="i-heroicons-chevron-down-20-solid" />
+
+                                    <template #panel>
+                                        <UCard>
+                                            <div class="space-y-2">
+                                                <UCheckbox v-model="seatRendererOptions.showRowCol" name="showRowCol" label="座席位置（席番号）表示" />
+                                                <UCheckbox v-model="seatRendererOptions.disableEditing" name="editable" label="ドラッグアンドドロップ無効" />
+                                            </div>
+                                        </UCard>
+                                    </template>
+                                </UPopover>
                             </div>
                             <div class="relative mb-4" :class="isFullScreen ? 'overflow-y-auto' : 'overflow-hidden'">
-                                <SeatRenderer id="seats" :classroom="classroom" :seats="resultForRendering" :show-row-col="false" :lg="isFullScreen" />
+                                <LazySeatRenderer
+                                    id="seats"
+                                    :classroom="classroom"
+                                    :seats="resultForRendering"
+                                    :show-row-col="seatRendererOptions.showRowCol"
+                                    :lg="isFullScreen"
+                                    :editable="effectState === 'done' && !seatRendererOptions.disableEditing"
+                                    @change-seat="changeSeatHandler"
+                                ></LazySeatRenderer>
                                 <div v-for="n of 3" :class="['absolute z-10 text-5xl lg:text-9xl font-bold top-1/2 left-1/2 opacity-0 text-red-500 select-none pointer-events-none', timerCount === n && $style.countAnim]">{{ n }}</div>
                             </div>
                             <div class="flex space-x-2 justify-center">
                                 <UButton v-if="effect === 'slot' && effectState !== 'done'" color="primary" size="lg" variant="solid"
                                     label="ストップ！" :disabled="!slotSpinning" @click="slotSpinning = false" />
                                 <template v-else-if="effectState === 'done'">
-                                    <UButton color="white" label="CSVでダウンロード" @click="exportResultToCSV()" />
+                                    <UButton color="white" label="CSVでダウンロード" icon="i-heroicons-arrow-down-tray" @click="exportResultToCSV()" />
                                 </template>
                             </div>
                             <UNotifications v-if="isFullScreen" />
@@ -289,8 +337,13 @@
 </style>
 
 <script setup lang="ts">
-import type { Classroom, Student, Seat } from '@/lib/sekigae';
-import { arrangeSeats, assignSeats, getSeatNumber } from '@/lib/sekigae';
+import type { Classroom, ClassroomWithStudents, Student, Seat } from '@/lib/sekigae';
+import { arrangeSeats, assignSeats, getSeatNumber, extractStudentsFromSeats } from '@/lib/sekigae';
+
+const isMounted = ref<boolean>(false);
+onMounted(() => {
+    isMounted.value = true;
+})
 
 const settingsTab = [
     {
@@ -660,7 +713,11 @@ const studentActionItems = (row: Student) => [
 
 // Sekigae START
 const result = ref<Student[]>();
-const resultForRendering = computed<(Student | null)[][]>(() => arrangeSeats(result.value ?? [], classroom.value));
+const resultForRendering = computed<ClassroomWithStudents | undefined>(() => result.value ? arrangeSeats(result.value, classroom.value) : undefined);
+const seatRendererOptions = ref({
+    showRowCol: false,
+    disableEditing: false,
+});
 const effect = ref<'none' | 'slot' | 'timer'>('none');
 const effectState = ref<'beforeRun' | 'running' | 'done'>('beforeRun');
 const slotSpinning = ref<boolean>(false);
@@ -725,6 +782,11 @@ function execSekigae() {
         result.value = JSON.parse(realResult);
         effectState.value = 'done';
     }
+}
+
+function changeSeatHandler(to: ClassroomWithStudents): void {
+    console.log('fired', to);
+    result.value = extractStudentsFromSeats(to);
 }
 
 function calculateOptionProbability(students: Student[], classroom: Classroom, iterations: number): void {

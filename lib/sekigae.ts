@@ -26,6 +26,9 @@ export type Student = {
 /** 座席配置 */
 export type Classroom = boolean[][];
 
+/** 生徒つき座席配置 */
+export type ClassroomWithStudents = (Student | null)[][];
+
 /**
  * 配列内をシャッフルする
  * @param array 
@@ -41,8 +44,9 @@ function shuffleArray<T>(array: T[]): T[] {
 
 /**
  * 抽選に使用できる座席の位置を取得
- * @param classroom 座席配置の二次元配列
- * @returns 座席定義の配列
+ * @param {Classroom} classroom 座席配置の二次元配列
+ * @param {Seat[]} ignore あらかじめ使用できない席を省く際に使用
+ * @returns {Seat[]} 座席定義の配列
  */
 function getAvailableSeats(classroom: Classroom, ignore: Seat[] = []): Seat[] {
     const ignoreCols = ignore.map((v) => v.col);
@@ -115,7 +119,7 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
         seats.splice(findSeatIndex(row, col, seats), 1);
     }
 
-    return assignedStudents;
+    return assignedStudents.sort((a, b) => a.studentId - b.studentId);
 }
 
 /**
@@ -147,22 +151,22 @@ function findBestSeat(student: Student, seats: Seat[], classroom: Classroom, con
 
                 if (chooseOptions.y) {
                     if ((chooseOptions.y === 'front' && (seat.col < bestSeat.col || seat.col < (classroom[0].length - 1) / 2)) ||
-                    (chooseOptions.y === 'rear' && (seat.col > bestSeat.col || seat.col > (classroom[0].length - 1) / 2))) {
+                        (chooseOptions.y === 'rear' && (seat.col > bestSeat.col || seat.col > (classroom[0].length - 1) / 2))) {
                         if (!chooseOptions.x) {
                             return true;
                         }
                     } else if (chooseOptions.x) {
                         return false;
-                    }    
+                    }
                 }
 
                 if (chooseOptions.x) {
                     if ((chooseOptions.x === 'left' && (seat.row < bestSeat.row || seat.row < (classroom.length - 1) / 2)) ||
-                    (chooseOptions.x === 'right' && (seat.row > bestSeat.row || seat.row > (classroom.length - 1) / 2))) {
+                        (chooseOptions.x === 'right' && (seat.row > bestSeat.row || seat.row > (classroom.length - 1) / 2))) {
                         return true;
                     } else if (chooseOptions.y) {
                         return false;
-                    }    
+                    }
                 }
 
                 return false;
@@ -199,8 +203,8 @@ function findSeatIndex(row: number, col: number, seats: Seat[]): number {
  * @param classroom 座席配置の二次元配列
  * @returns 座席配置どおりに生徒一覧を配置した二次元配列（空席は`null`）
  */
-export function arrangeSeats(students: Student[], classroom: Classroom): (Student | null)[][] {
-    const arrangedSeats: (Student | null)[][] = [];
+export function arrangeSeats(students: Student[], classroom: Classroom): ClassroomWithStudents {
+    const arrangedSeats: ClassroomWithStudents = [];
 
     for (let row = 0; row < classroom.length; row++) {
         arrangedSeats[row] = [];
@@ -217,6 +221,27 @@ export function arrangeSeats(students: Student[], classroom: Classroom): (Studen
     }
 
     return arrangedSeats;
+}
+
+
+/**
+ * 座席表二次元配列形式から、生徒ごとのrow, col一覧に変換
+ * @param seats 座席表の2次元配列
+ * @returns 生徒の配列
+ */
+export function extractStudentsFromSeats(seats: ClassroomWithStudents): Student[] {
+    const students: Student[] = [];
+
+    for (let row = 0; row < seats.length; row++) {
+        for (let col = 0; col < seats[row].length; col++) {
+            const student = seats[row][col];
+            if (student !== null) {
+                student.seat = { row, col };
+                students.push(student);
+            }
+        }
+    }
+    return students.sort((a, b) => a.studentId - b.studentId);
 }
 
 /**

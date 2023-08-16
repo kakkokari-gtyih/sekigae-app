@@ -14,6 +14,7 @@
     "@types/encoding-japanese": "^2.0.1",
     "@types/node": "^18.16.19",
     "encoding-japanese": "^2.0.0",
-    "nuxt": "^3.6.5"
+    "nuxt": "^3.6.5",
+    "vuedraggable": "^4.1.0"
   }
 }
