@@ -18,7 +18,7 @@ const items = computed(() => {
 })
 </script>
 <template>
-    <header class="h-[3.65rem] p-3 bg-white border-b dark:border-slate-400 fixed top-0 left-0 z-[10000] w-full z-10">
+    <header class="h-[3.65rem] p-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-400 fixed top-0 left-0 z-[10000] w-full z-10">
         <UContainer class="h-full flex items-center">
             <NuxtLink :to="localePath('/')" class="block text-xl sm:text-2xl font-bold">
                 <img src="/img/logo.png" class="h-7 sm:h-8 w-auto inline-block mr-2" />Sekigae.app
