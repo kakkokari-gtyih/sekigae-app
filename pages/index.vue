@@ -1,7 +1,7 @@
 <template>
     <div class="relative bg-slate-50 dark:bg-slate-900">
         <UContainer class="relative pt-5 space-y-6">
-            <div :class="['fixed top-0 left-0 w-screen h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 z-[300] flex items-center transition-opacity duration-300', {'opacity-0 pointer-events-none': isMounted}]">
+            <div :class="['fixed top-0 left-0 w-screen h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 z-[9990] flex items-center transition-opacity duration-300', {'opacity-0 pointer-events-none': isMounted}]">
                 <div class="w-full text-center font-bold text-2xl">
                     <div class="flex justify-center mb-5">
                         <div class="animate-spin h-10 w-10 border-4 border-primary-500 rounded-full border-t-transparent"></div>
