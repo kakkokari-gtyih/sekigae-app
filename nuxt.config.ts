@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// 公開時のドメイン（末尾スラッシュなし）
 import genSitemap from './scripts/gen-sitemap';
 
-const baseUrl = 'https://misskey-hub.net';
+// 公開時のドメイン（末尾スラッシュなし）
+const baseUrl = 'https://sekigae.app';
 
 export const locales = [
 	{ code: 'ja', iso: 'ja-JP', name: '日本語' },

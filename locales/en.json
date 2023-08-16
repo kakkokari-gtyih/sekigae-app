@@ -89,12 +89,12 @@
     },
     "exec": {
         "canExec": {
-            "title": "Ready to Execute Seating",
+            "title": "Ready to Execute Seating.",
             "description1": "Choose an effect and click 'Perform Seating.' Fullscreen mode is useful for projection purposes.",
             "description2": "After executing seating, you can rearrange seats by drag-and-drop. Rearranged data will be reflected in the exported CSV."
         },
         "cannotExec": {
-            "title": "Cannot Execute Seating",
+            "title": "Cannot Execute Seating.",
             "toastTitle": "Mismatched Member and Seat Counts",
             "description1": "Please ensure the number of seats matches the number of members."
         },
