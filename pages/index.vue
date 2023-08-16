@@ -580,7 +580,7 @@ function exportToCSV() {
             ].map((f) => `"${f}"`).join(',');
         });
 
-        stringified.unshift('出席番号,名前,ふりがな,"左右の希望（L または R で記入。L＝左, R＝右）","前後の希望（F または R で記入。F＝前, R＝後ろ）",座席指定（左からn番目・前からm番目のとき→[n_m]のようにアンダーバーで区切る）');
+        stringified.unshift('出席番号,名前,ふりがな,"左右の希望（L または R で記入。L＝左, R＝右）","前後の希望（F または R で記入。F＝前, R＝後ろ）",座席指定（左からr番目・前からc番目のとき→[r_c]のようにアンダーバーで区切る）');
 
         downloadCSVFile(stringified.join('\r\n'), 'sekigae.csv');
     }
@@ -877,12 +877,15 @@ function exportResultToCSV() {
         e.studentId.toString(),
         e.name ?? '',
         e.furigana ?? '',
+        e.chooseOptions.x ? e.chooseOptions.x.slice(0, 1).toUpperCase() : '',
+        e.chooseOptions.y ? e.chooseOptions.y.slice(0, 1).toUpperCase() : '',
+        '',
+        (e.seat) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
         (e.seat) ? (e.seat.row + 1) : '',
         (e.seat) ? (e.seat.col + 1) : '',
         (e.seat) ? getSeatNumber(e.seat, classroom.value).toString() : '',
-        (e.seat) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
     ].map((f) => `"${f}"`).join(','));
-    out.unshift('出席番号,名前,ふりがな,行,列,座席通し番号,座席指定(R_C)');
+    out.unshift('出席番号,名前,ふりがな,左右の希望,前後の希望,座席指定を流用する場合はこの列を削除,座席指定(R_C),行,列,座席通し番号');
     downloadCSVFile(out.join('\r\n'), 'sekigaeResult.csv');
 }
 
