@@ -1,14 +1,17 @@
 {
     "common": {
         "loading": "Loading…",
-        "title": "Sekigae.app - High-Function Seating Chart Creator",
-        "description": "Make perfect seating arrangements effortlessly, respecting your members' seat preferences (fixed, front/back, left/right), with Sekigae.app!",
-        "unsavedChanges": "If you navigate away from this page, all data, including student information and seating arrangement results, will be lost.\nBe sure to export and save any unsaved data. Do you want to proceed?",
+        "title": "Sekigae.app - High-Function Seating Arrangement App",
+        "description": "Achieve seat arrangements based on seat preference (fixed, front/back, left/right) with Sekigae.app!",
+        "unsavedChanges": "このページから遷移すると、生徒の情報・席替えの結果を含むすべてのデータが失われます。\n未保存のデータは必ずエクスポートして保存してください。遷移してよろしいですか？",
         "nav": {
             "terms": "Terms of Service",
             "helpTranslate": "Help Translate",
             "tondabayashiHs": "Tondabayashi High School"
         }
+    },
+    "seo": {
+        "defaultDescription": "【「窓際希望」をかなえる席替え】独自アルゴリズムで、全員の座席の希望が通りやすい席替えアプリ。CSVのインポート・エクスポート機能付きで、席替え後の事務作業もラクラク！"
     },
     "tabs": {
         "classroom": "① Seat Arrangement",
@@ -16,7 +19,7 @@
         "exec": "③ Perform a Seat Change"
     },
     "classroom": {
-        "colRow": "Range: {col} × {row} / {seatCount} seats selected ({studentCount} members added)",
+        "colRow": "Range: {col} × {row} / {seatCount} seats selected ({studentCount} members registered)",
         "description": "Align the number of desks with the number of vertical and horizontal desks in the classroom, then select the seats that do not exist and gray them out."
     },
     "students": {
