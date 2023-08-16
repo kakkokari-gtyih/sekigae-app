@@ -1,0 +1,144 @@
+{
+    "common": {
+        "loading": "読み込み中…",
+        "title": "Sekigae.app - 高機能席替えアプリ",
+        "description": "座席位置の希望（固定・前方/後方/左右）をかなえる席替えが可能です。",
+        "nav": {
+            "terms": "利用規約",
+            "helpTranslate": "翻訳を手伝う",
+            "tondabayashiHs": "富田林高校HP"
+        }
+    },
+    "tabs": {
+        "classroom": "①座席の配置",
+        "students": "②メンバーの情報",
+        "exec": "③席替え実行"
+    },
+    "classroom": {
+        "colRow": "{col} 列 × {row} 行 選択済み: {seatCount} 席（生徒数: {studentCount} 人）",
+        "description": "教室のタテ・ヨコの机の数と合わせたあと、存在しない席を選択して灰色にしてください。"
+    },
+    "students": {
+        "seatsAndStudents": "座席数 {seatCount} 席に対して、現在の人数 {studentCount} 人",
+        "description": "右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。",
+        "privacy": "このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。",
+        "studentEdit": {
+            "title": "メンバーの追加",
+            "modalTitle": "メンバーの追加 / 編集",
+            "optional": "任意",
+            "studentId": "出席番号",
+            "name": "名前",
+            "furigana": "ふりがな",
+            "fixedPosition": {
+                "switch": "固定配置を有効にする",
+                "description": "このメンバーを配置する席を、座席表からクリックして選択してください。【確保】となっている場合は、すでに他のメンバーが座席指定をしているため選択できません。"
+            },
+            "condition": {
+                "switch": "優先配置を有効にする",
+                "xLeft": "左側優先",
+                "xRight": "右側優先",
+                "xNone": "左右の希望なし",
+                "yFront": "前方優先",
+                "yRear": "後方優先",
+                "yNone": "前後の希望なし",
+                "disclaimerTitle": "【免責事項】",
+                "disclaimer": "席の割り当ては、上記の設定に基づいて行われますが、条件に反した席が選ばれる可能性があります。希望に基づいて席を割り当てるために優先順位を考慮していますが、希望に合致する席が利用可能な場合にのみ割り当てが行われるため、利用可能な席が希望に合致しない場合や、席が不足している場合には、条件に反した席が選ばれる可能性があります。"
+            },
+            "duplicateStudentId": "出席番号が重複しています"
+        },
+        "studentEasyInput": {
+            "title": "かんたん一括挿入",
+            "label": "メンバーの名前（一人ずつ改行で入力）",
+            "help": "すでにメンバーが居る場合は、その出席番号に続けて末尾に挿入されます。"
+        },
+        "importFromCSV": {
+            "title": "CSVインポート",
+            "error": "CSVの読み込み中にエラーが発生しました。",
+            "cannotLoadCSV": "CSVを読み込めません。ファイル形式を確認してください。\n文字コードを「UTF-8」にして保存してください。"
+        },
+        "exportToCSV": {
+            "title": "エクスポート",
+            "noStudents": {
+                "title": "メンバー情報がありません",
+                "description": "メンバーを追加してからエクスポートしてください"
+            }
+        },
+        "downloadCSVTemplate": {
+            "title": "CSVひな型ダウンロード"
+        },
+        "table": {
+            "cols": {
+                "studentId": "出席番号",
+                "name": "名前",
+                "fixed": "固定配置",
+                "condition": "優先配置"
+            },
+            "empty": {
+                "description": "メンバーが誰も追加されていません。"
+            },
+            "actions": {
+                "edit": "編集",
+                "delete": "削除"
+            },
+            "yes": "あり",
+            "no": "なし"
+        },
+        "save": "保存",
+        "cancel": "キャンセル"
+    },
+    "exec": {
+        "canExec": {
+            "title": "席替えを実行できます。",
+            "description1": "演出エフェクトを選んで、「席替え実施」をクリックしてください。「全画面表示」はスクリーンへの投影などに便利です。",
+            "description2": "席替え実施後、座席をドラッグアンドドロップすることで並べ替えが可能です。並べ替えたデータはCSVでの出力データにも反映されます。"
+        },
+        "cannotExec": {
+            "title": "席替えを実行できません。",
+            "toastTitle": "メンバー数と座席数が合いません",
+            "description1": "座席数とメンバーの人数を合致させてください。"
+        },
+        "effects": {
+            "none": {
+                "title": "エフェクトなし"
+            },
+            "slot": {
+                "title": "スロット",
+                "stop": "ストップ！"
+            },
+            "timer": {
+                "title": "カウントダウン"
+            }
+        },
+        "actions": {
+            "exec": "席替え実行",
+            "fullscreen": "全画面表示",
+            "exitFullscreen": "全画面表示を解除",
+            "downloadResultCSV": "CSVでダウンロード"
+        },
+        "options": {
+            "title": "オプション",
+            "showRowCol": "座席位置（席番号）表示",
+            "editable": "ドラッグアンドドロップ無効"
+        },
+        "downloadResultCSV": {
+            "noData": {
+                "title": "データがありません",
+                "description": "席替えを実施していない場合は実施してからダウンロードしてください"
+            }
+        }
+    },
+    "csvSyntax": {
+        "headerIdentifier": "出席番号",
+        "templateHeaderRow": "出席番号,名前,ふりがな,\"左右の希望（L または R で記入。L＝左, R＝右）\",\"前後の希望（F または R で記入。F＝前, R＝後ろ）\",座席指定（左からr番目・前からc番目のとき→[r_c]のようにアンダーバーで区切る）",
+        "resultHeaderRow": "出席番号,名前,ふりがな,左右の希望,前後の希望,座席指定を流用する場合はこの列を削除,座席指定(R_C),行,列,座席通し番号(左前から)"
+    },
+    "seatSelector": {
+        "front": "前",
+        "addRow": "行を追加",
+        "addCol": "列を追加",
+        "cannotDeleteAnymore": "これ以上削除できません",
+        "occupied": "確保",
+        "col": "{col} 列",
+        "row": "{row} 席"
+    }
+}
