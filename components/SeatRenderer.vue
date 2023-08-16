@@ -25,7 +25,7 @@
                 </div>
             </div>
             <template v-if="!editable || !realSeats" v-for="seat, j in row">
-                <div :class="['relative font-bold flex flex-col justify-center text-gray-900', (seats && seats[i][j] && Number.isInteger(seats[i][j]?.studentId)) ? 'bg-yellow-200 dark:bg-yellow-600': 'bg-gray-200 dark:bg-gray-800', lg ? 'h-[100px]' : 'h-[60px]']">
+                <div :class="['relative font-bold flex flex-col justify-center text-gray-900', (seats && seats[i][j] && Number.isInteger(seats[i][j]?.studentId)) ? 'bg-yellow-200 dark:bg-yellow-600': 'bg-gray-200 dark:bg-gray-700', lg ? 'h-[100px]' : 'h-[60px]']">
                     <template v-if="seats && (seats[i][j] !== null) && Number.isInteger(seats[i][j]?.studentId)">
                         <template v-if="seats[i][j]?.name">
                             <div class="absolute top-0 left-0 bg-yellow-400 text-center font-bold rounded-br-md" :class="lg ? 'w-10 text-xl 2xl:text-2xl' : 'w-7 text-base hidden md:block'">{{ seats[i][j]?.studentId }}</div>
