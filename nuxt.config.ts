@@ -9,4 +9,15 @@ export default defineNuxtConfig({
     ui: {
         global: true,
     },
+    vite: {
+        build: {
+            rollupOptions: {
+                output: {
+                    manualChunks: {
+                        sekigae: ['./lib/sekigae.ts'],
+                    }
+                }
+            }
+        }
+    }
 })
