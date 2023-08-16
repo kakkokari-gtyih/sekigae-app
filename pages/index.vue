@@ -477,7 +477,6 @@ function importFromCSV() {
                         if (rawStudents[0].match(new RegExp(`^(")*${t('csvSyntax.headerIdentifier')}`))) {
                             rawStudents.shift();
                         }
-                        console.log(rawStudents);
                         const parsedStudents = rawStudents.filter((v) => v.includes(',') && !isNaN(parseInt(v.split(',')[0].replaceAll("\"", "")))).map<Student>((v) => {
                             let parsedStudent = v.split(",");
                             let seat: Seat | undefined = undefined;

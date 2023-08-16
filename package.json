@@ -16,6 +16,7 @@
     "@types/node": "^18.16.19",
     "encoding-japanese": "^2.0.0",
     "nuxt": "^3.6.5",
+    "schema-dts": "^1.1.2",
     "sitemap": "^7.1.1",
     "vuedraggable": "^4.1.0"
   }
