@@ -467,7 +467,7 @@ function importFromCSV() {
                             rawStudents.shift();
                         }
 
-                        const parsedStudents = rawStudents.filter((v) => v.includes(',')).map<Student>((v) => {
+                        const parsedStudents = rawStudents.filter((v) => v.includes(',') && !isNaN(parseInt(v.split(',')[0]))).map<Student>((v) => {
                             let parsedStudent = v.split(",");
                             let seat: Seat | undefined = undefined;
                             //@ts-ignore
