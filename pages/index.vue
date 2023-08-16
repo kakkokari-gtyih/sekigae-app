@@ -14,13 +14,24 @@
             </h1>
             <p>{{ $t('common.description') }}</p>
 
-            <UTabs :items="settingsTab" :default-index="0" v-model="settingsTabIndex">
+            <UTabs
+                :items="settingsTab"
+                v-model="settingsTabIndex"
+                :ui="{
+                    list: {
+                        base: 'relative group',
+                        marker: {
+                            background: 'bg-white dark:bg-gray-900 ring-0 group-[:has(:focus-visible)]:ring-2 ring-primary-500',
+                        }
+                    },
+                }"
+            >
                 <template #classroom>
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="mb-4">
                             <I18nT keypath="classroom.colRow" tag="p" class="text-lg">
-                                <template #col><b>{{ classroom[0].length }}</b></template>
-                                <template #row><b>{{ classroom.length }}</b></template>
+                                <template #col><b>{{ classroom.length }}</b></template>
+                                <template #row><b>{{ classroom[0].length }}</b></template>
                                 <template #seatCount><b>{{ availableSeats }}</b></template>
                                 <template #studentCount><b>{{ students.length }}</b></template>
                             </I18nT>
@@ -37,11 +48,11 @@
                             <div class="space-y-1 grid grid-cols-1 h-full">
                                 <div class="h-1"></div>
                                 <UButton v-for="seat, i in classroom[0]" :block="true" color="white" icon="i-heroicons-x-mark"
-                                    @click="delCol(i)">
+                                    @click="delRow(i)">
                                 </UButton>
                             </div>
                             <div v-for="row, i in classroom" class="space-y-1">
-                                <UButton :block="true" color="white" icon="i-heroicons-x-mark" @click="delRow(i)">
+                                <UButton :block="true" color="white" icon="i-heroicons-x-mark" @click="delCol(i)">
                                 </UButton>
                                 <button v-for="seat, j in row"
                                     :class="['block w-full min-h-[60px] p-3', seat ? 'bg-yellow-200 dark:bg-yellow-600' : 'bg-gray-200 dark:bg-gray-800']"
@@ -50,13 +61,12 @@
                             </div>
                             <div class="space-y-1 grid h-full" style="grid-template-rows: 32px 1fr;">
                                 <div></div>
-                                <UButton :block="true" icon="i-heroicons-plus" style="writing-mode: vertical-rl;" @click="addRow()">
-                                    {{ $t('seatSelector.addRow') }}
+                                <UButton :block="true" icon="i-heroicons-plus" class="flex-col space-y-2" @click="addCol()">
+                                    <span style="writing-mode: vertical-rl;">{{ $t('seatSelector.addCol') }}</span>
                                 </UButton>
                             </div>
-                            <UButton :block="true" icon="i-heroicons-plus" :style="`grid-column: 2 / ${classroom.length + 2}`"
-                                @click="addCol()">
-                                {{ $t('seatSelector.addCol') }}
+                            <UButton :block="true" icon="i-heroicons-plus" :style="`grid-column: 2 / ${classroom.length + 2}`" @click="addRow()">
+                                {{ $t('seatSelector.addRow') }}
                             </UButton>
                         </div>
                     </UCard>
@@ -389,11 +399,11 @@ const classroom = ref<Classroom>([
 const availableSeats = computed(() => classroom.value.map((row) => row.reduce((p, c) => p + (c ? 1 : 0), 0)).reduce((p, c) => p + c));
 const manuallySelectedSeats = computed<Seat[]>(() => students.value.map((e) => e.seat ? e.seat : null).filter<Seat>((e) => e !== null));
 
-function addRow() {
+function addCol() {
     classroom.value.push(new Array(classroom.value[0].length).fill(true));
 }
 
-function delRow(n: number) {
+function delCol(n: number) {
     if (classroom.value.length <= 1) {
         alert(t('seatSelector.cannotDeleteAnymore'));
         return;
@@ -401,13 +411,13 @@ function delRow(n: number) {
     classroom.value.splice(n, 1);
 }
 
-function addCol() {
+function addRow() {
     classroom.value.forEach((v) => {
         v.push(true);
     });
 }
 
-function delCol(n: number) {
+function delRow(n: number) {
     if (classroom.value[0].length <= 1) {
         alert(t('seatSelector.cannotDeleteAnymore'));
         return;
@@ -466,8 +476,8 @@ function importFromCSV() {
                         if (rawStudents[0].match(new RegExp(`^(")*${t('csvSyntax.headerIdentifier')}`))) {
                             rawStudents.shift();
                         }
-
-                        const parsedStudents = rawStudents.filter((v) => v.includes(',') && !isNaN(parseInt(v.split(',')[0]))).map<Student>((v) => {
+                        console.log(rawStudents);
+                        const parsedStudents = rawStudents.filter((v) => v.includes(',') && !isNaN(parseInt(v.split(',')[0].replaceAll("\"", "")))).map<Student>((v) => {
                             let parsedStudent = v.split(",");
                             let seat: Seat | undefined = undefined;
                             //@ts-ignore
@@ -577,7 +587,7 @@ function exportToCSV() {
                 e.furigana ?? '',
                 x,
                 y,
-                (e.seat) ? [(e.seat.col + 1), (e.seat.row + 1)].join('_') : '',
+                (e.seat) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
             ].map((f) => `"${f}"`).join(',');
         });
 
@@ -878,12 +888,12 @@ function exportResultToCSV() {
         e.studentId.toString(),
         e.name ?? '',
         e.furigana ?? '',
-        e.chooseOptions.x ? e.chooseOptions.x.slice(0, 1).toUpperCase() : '',
-        e.chooseOptions.y ? e.chooseOptions.y.slice(0, 1).toUpperCase() : '',
+        (e.chooseOptions && e.chooseOptions.x) ? e.chooseOptions.x.slice(0, 1).toUpperCase() : '',
+        (e.chooseOptions && e.chooseOptions.y) ? e.chooseOptions.y.slice(0, 1).toUpperCase() : '',
         '',
-        (e.seat) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
-        (e.seat) ? (e.seat.row + 1) : '',
-        (e.seat) ? (e.seat.col + 1) : '',
+        (e.seat && e.seat.row && e.seat.col) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
+        (e.seat && e.seat.row) ? (e.seat.row + 1) : '',
+        (e.seat && e.seat.col) ? (e.seat.col + 1) : '',
         (e.seat) ? getSeatNumber(e.seat, classroom.value).toString() : '',
     ].map((f) => `"${f}"`).join(','));
     out.unshift(t('csvSyntax.resultHeaderRow'));
@@ -913,4 +923,39 @@ function toggleFullScreen() {
     }
 }
 // PostSekigae END
+
+// RouteGuard START
+const hasChanged = ref<boolean>(false);
+
+function nativeBeforeUnload(ev: Event) {
+    ev.preventDefault();
+    // @ts-ignore
+    ev.returnValue = '';
+}
+
+onBeforeRouteLeave((to, from, next) => {
+    if (!process.client) {
+        next();
+        return;
+    }
+    const answer = !hasChanged.value || window.confirm(t('common.unsavedChanges'));
+    if (answer) {
+        window.removeEventListener('beforeunload', nativeBeforeUnload);
+        next();
+    } else {
+        next(false);
+    }
+});
+
+const changeWatcher = watch([students, classroom, result], () => {
+    hasChanged.value = true;
+    if (process.client) {
+        window.addEventListener('beforeunload', nativeBeforeUnload);
+    }
+    // ウォッチャー停止
+    changeWatcher();
+}, {
+    deep: true,
+});
+// RouteGuard END
 </script>
