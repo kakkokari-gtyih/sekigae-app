@@ -38,8 +38,8 @@
                             </I18nT>
                             <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('classroom.description') }}</p>
                         </div>
-                        <div class="w-full grid gap-1" :style="`grid-template-columns: auto repeat(${classroom.length}, 1fr) auto`">
-                            <div :style="`grid-column: 1 / ${classroom.length + 3}`" class="text-center text-lg font-bold p-1">
+                        <div class="w-full grid gap-1" :class="$style.seatDefinerRoot" style="grid-template-columns: auto repeat(var(--col-count), 1fr) auto">
+                            <div style="grid-column: 1 / calc(var(--col-count) + 3)" class="text-center text-lg font-bold p-1">
                                 <UIcon name="i-heroicons-arrow-small-up"
                                     style="height: 1em; width: 1em; vertical-align: -.125em;" />
                                 {{ $t('seatSelector.front') }}
@@ -66,7 +66,7 @@
                                     <span style="writing-mode: vertical-rl;">{{ $t('seatSelector.addCol') }}</span>
                                 </UButton>
                             </div>
-                            <UButton :block="true" icon="i-heroicons-plus" :style="`grid-column: 2 / ${classroom.length + 2}`" @click="addRow()">
+                            <UButton :block="true" icon="i-heroicons-plus" style="grid-column: 2 / calc(var(--col-count) + 2)" @click="addRow()">
                                 {{ $t('seatSelector.addRow') }}
                             </UButton>
                         </div>
@@ -329,6 +329,11 @@
 </template>
 
 <style module>
+.seatDefinerRoot {
+    --col-count: v-bind(classroom.length);
+    --row-count: v-bind(classroom[0].length);
+}
+
 .countAnim :global {
     animation-name: count-anim;
     animation-duration: 950ms;
