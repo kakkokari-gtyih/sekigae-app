@@ -43,6 +43,7 @@ export default defineNuxtConfig({
 		locales,
 		defaultLocale: 'ja',
 		strategy: 'prefix',
+        trailingSlash: true,
     },
     nitro: {
 		hooks: {
@@ -58,6 +59,7 @@ export default defineNuxtConfig({
     },
     experimental: {
 		inlineSSRStyles: false,
+        componentIslands: true,
 		payloadExtraction: true,
 	},
 })
