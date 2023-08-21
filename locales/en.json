@@ -4,6 +4,7 @@
         "title": "Sekigae.app - High-Function Seating Arrangement App",
         "description": "Achieve seat arrangements based on seat preference (fixed, front/back, left/right) with Sekigae.app!",
         "unsavedChanges": "このページから遷移すると、生徒の情報・席替えの結果を含むすべてのデータが失われます。\n未保存のデータは必ずエクスポートして保存してください。遷移してよろしいですか？",
+        "noScript": "ブラウザの設定からJavascriptを有効にしてください。",
         "nav": {
             "terms": "Terms of Service",
             "helpTranslate": "Help Translate",
