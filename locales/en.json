@@ -4,10 +4,11 @@
         "title": "Sekigae.app - High-Function Seating Chart Creator",
         "description": "Make perfect seating arrangements effortlessly, respecting your members' seat preferences (fixed, front/back, left/right), with Sekigae.app!",
         "unsavedChanges": "If you navigate away from this page, all data, including student information and seating arrangement results, will be lost.\nBe sure to export and save any unsaved data. Do you want to proceed?",
+        "noScript": "Please turn on Javascript from your browser's settings.",
         "nav": {
             "terms": "Terms of Service",
             "helpTranslate": "Help Translate",
-            "tondabayashiHs": "Tondabayashi High School"
+            "tondabayashiHs": "Tondabayashi HS"
         }
     },
     "tabs": {
