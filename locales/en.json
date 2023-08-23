@@ -1,14 +1,14 @@
 {
     "common": {
         "loading": "Loading…",
-        "title": "Sekigae.app - High-Function Seating Arrangement App",
-        "description": "Achieve seat arrangements based on seat preference (fixed, front/back, left/right) with Sekigae.app!",
-        "unsavedChanges": "このページから遷移すると、生徒の情報・席替えの結果を含むすべてのデータが失われます。\n未保存のデータは必ずエクスポートして保存してください。遷移してよろしいですか？",
-        "noScript": "ブラウザの設定からJavascriptを有効にしてください。",
+        "title": "Sekigae.app - High-Function Seating Chart Creator",
+        "description": "Make perfect seating arrangements effortlessly, respecting your members' seat preferences (fixed, front/back, left/right), with Sekigae.app!",
+        "unsavedChanges": "If you navigate away from this page, all data, including student information and seating arrangement results, will be lost.\nBe sure to export and save any unsaved data. Do you want to proceed?",
+        "noScript": "Please turn on Javascript from your browser's settings.",
         "nav": {
             "terms": "Terms of Service",
             "helpTranslate": "Help Translate",
-            "tondabayashiHs": "Tondabayashi High School"
+            "tondabayashiHs": "Tondabayashi HS"
         }
     },
     "seo": {
@@ -20,7 +20,7 @@
         "exec": "③ Perform a Seat Change"
     },
     "classroom": {
-        "colRow": "Range: {col} × {row} / {seatCount} seats selected ({studentCount} members registered)",
+        "colRow": "Range: {col} × {row} / {seatCount} seats selected ({studentCount} members added)",
         "description": "Align the number of desks with the number of vertical and horizontal desks in the classroom, then select the seats that do not exist and gray them out."
     },
     "students": {
@@ -93,12 +93,12 @@
     },
     "exec": {
         "canExec": {
-            "title": "Ready to Execute Seating",
+            "title": "Ready to Execute Seating.",
             "description1": "Choose an effect and click 'Perform Seating.' Fullscreen mode is useful for projection purposes.",
             "description2": "After executing seating, you can rearrange seats by drag-and-drop. Rearranged data will be reflected in the exported CSV."
         },
         "cannotExec": {
-            "title": "Cannot Execute Seating",
+            "title": "Cannot Execute Seating.",
             "toastTitle": "Mismatched Member and Seat Counts",
             "description1": "Please ensure the number of seats matches the number of members."
         },
