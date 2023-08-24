@@ -800,8 +800,11 @@ function execSekigae() {
     }
 }
 
-function changeSeatHandler(to: ClassroomWithStudents): void {
-    console.log('fired', to);
+function changeSeatHandler(to: ClassroomWithStudents | undefined): void {
+    if (!to) {
+        result.value = undefined;
+        return;
+    }
     result.value = extractStudentsFromSeats(to);
 }
 
