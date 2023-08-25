@@ -363,7 +363,9 @@ import { arrangeSeats, assignSeats, getSeatNumber, extractStudentsFromSeats } fr
 
 const isMounted = ref<boolean>(false);
 onMounted(() => {
-    isMounted.value = true;
+    setTimeout(() => {
+        isMounted.value = true;
+    }, 100);
 });
 
 const { t } = useI18n();
@@ -911,6 +913,7 @@ function exportResultToCSV() {
 const isFullScreen = ref<boolean>(false);
 function resetFullScreenState() {
     if (!document.fullscreenElement) {
+        screen.orientation.unlock();
         isFullScreen.value = false;
     }
 }
@@ -919,13 +922,18 @@ function toggleFullScreen() {
     if (process.client) {
         if (document.fullscreenElement) {
             document.exitFullscreen().then(() => {
+                screen.orientation.unlock();
                 isFullScreen.value = false;
                 document.removeEventListener('fullscreenchange', resetFullScreenState);
             });
         } else if(sekigaeResultView.value) {
             sekigaeResultView.value?.requestFullscreen().then(() => {
-                isFullScreen.value = true;
-                document.addEventListener('fullscreenchange', resetFullScreenState);
+                screen.orientation.lock('landscape').catch((error) => {
+                    console.warn(error);
+                }).finally(() => {
+                    isFullScreen.value = true;
+                    document.addEventListener('fullscreenchange', resetFullScreenState);
+                });
             });
         }
     }
@@ -937,10 +945,12 @@ const hasChanged = ref<boolean>(false);
 
 const screenWidth = ref<number>(1280);
 function adjustWidth() {
-    screenWidth.value = window.innerWidth;
+    screenWidth.value = document.documentElement.clientWidth;
 }
 if (process.client) {
-    adjustWidth();
+    onMounted(() => {
+        adjustWidth();
+    });
     window.addEventListener('resize', adjustWidth);
 }
 
