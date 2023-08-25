@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
+    "@nuxthq/ui": "npm:@nuxthq/ui-edge@2.7.0-28213128.50212b6",
     "@nuxtjs/i18n": "8.0.0-rc.2",
     "@types/encoding-japanese": "^2.0.1",
     "@types/node": "^18.16.19",
