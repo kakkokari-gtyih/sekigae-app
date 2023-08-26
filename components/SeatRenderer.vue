@@ -25,7 +25,7 @@
             </div>
         </div>
         <div v-if="!editable || !realSeats" class="grid gap-1 grid-flow-col" :style="[showRowCol ? 'grid-area: 3/2/4/3;' : 'grid-area: 2/1/3/2;', `grid-template-columns: repeat(${classroom.length}, 1fr); grid-template-rows: repeat(${classroom[0].length}, 1fr)`]">
-            <div v-for="seat in realSeats" :class="['relative font-bold flex flex-col justify-center text-gray-900', (seat && Number.isInteger(seat?.studentId)) ? 'bg-yellow-200 dark:bg-yellow-600': 'bg-gray-200 dark:bg-gray-700', lg ? 'h-[100px]' : 'h-[60px]']">
+            <div v-if="realSeats" v-for="seat in realSeats" :class="['relative font-bold flex flex-col justify-center text-gray-900', (seat && Number.isInteger(seat?.studentId)) ? 'bg-yellow-200 dark:bg-yellow-600': 'bg-gray-200 dark:bg-gray-700', lg ? 'h-[100px]' : 'h-[60px]']">
                 <template v-if="(seat !== null) && Number.isInteger(seat?.studentId)">
                     <template v-if="seat?.name">
                         <div class="absolute top-0 left-0 bg-yellow-400 text-center font-bold rounded-br-md" :class="lg ? 'w-10 text-xl 2xl:text-2xl' : 'w-7 text-base hidden md:block'">{{ seat?.studentId }}</div>
@@ -36,6 +36,9 @@
                         {{ seat?.studentId }}
                     </div>
                 </template>
+            </div>
+            <div v-else v-for="n of classroom.reduce((p, c) => p + c.length, 0)" :class="['relative font-bold flex flex-col justify-center text-gray-900 select-none', 'bg-gray-200 dark:bg-gray-800', lg ? 'h-[100px]' : 'h-[60px]']">
+
             </div>
         </div>
         <Draggable
@@ -118,6 +121,7 @@ function getSeats(draggerSeats?: (Student | { studentId: number; })[]): Classroo
 const realSeats = ref<(Student | { studentId: number; })[] | undefined>(getSeatsForDragger(props?.seats));
 
 watch(() => props.seats, (to) => {
+    console.log({ to });
     if (!to) {
         realSeats.value = undefined;
     } else {
