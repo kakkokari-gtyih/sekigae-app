@@ -1,0 +1,149 @@
+{
+    "common": {
+        "loading": "Loading…",
+        "title": "Sekigae.app - High-Function Seating Chart Creator",
+        "description": "Make perfect seating arrangements effortlessly, respecting your members' seat preferences (fixed, front/back, left/right), with Sekigae.app!",
+        "unsavedChanges": "If you navigate away from this page, all data, including student information and seating arrangement results, will be lost.\nBe sure to export and save any unsaved data. Do you want to proceed?",
+        "noScript": "Please turn on Javascript from your browser's settings.",
+        "nav": {
+            "terms": "Terms of Service",
+            "helpTranslate": "Help Translate",
+            "tondabayashiHs": "Tondabayashi HS"
+        }
+    },
+    "seo": {
+        "defaultDescription": "With our unique algorithm, this app makes it easy for everyone's seating preferences to be accommodated. It also includes CSV import and export functions, making post-rearrangement administrative tasks a breeze!"
+    },
+    "tabs": {
+        "classroom": "① Seat Arrangement",
+        "students": "② Member Information",
+        "exec": "③ Perform a Seat Change"
+    },
+    "classroom": {
+        "colRow": "Range: {col} × {row} / {seatCount} seats selected ({studentCount} members added)",
+        "description": "Align the number of desks with the number of vertical and horizontal desks in the classroom, then select the seats that do not exist and gray them out."
+    },
+    "students": {
+        "seatsAndStudents": "{studentCount} Students out of {seatCount} Seats",
+        "description": "Register members for seat rearrangement using 'Add Member' on the right, or import member data from a CSV list.",
+        "privacy": "This program runs entirely in your browser, ensuring that your input data stays within your device and does not go online.",
+        "studentEdit": {
+            "title": "Add Member",
+            "modalTitle": "Add / Edit Member",
+            "optional": "Optional",
+            "studentId": "Attendance Number",
+            "name": "Name",
+            "furigana": "Furigana (JA)",
+            "fixedPosition": {
+                "switch": "Enable Fixed Position",
+                "description": "Click to select a seat for this member from the seating chart. Seats marked 'Reserved' are unavailable due to other member seat assignments."
+            },
+            "condition": {
+                "switch": "Enable Priority Placement",
+                "xLeft": "Prefer Seat on Left Side",
+                "xRight": "Prefer Seat on Right Side",
+                "xNone": "No Left/Right Preference",
+                "yFront": "Prefer Front Seating",
+                "yRear": "Prefer Rear Seating",
+                "yNone": "No Front/Back Preference",
+                "disclaimerTitle": "[Disclaimer]",
+                "disclaimer": "Seat assignments are made based on the above settings. While efforts are made to accommodate preferences, it's possible that seats might not match the specified conditions. Assignments are only made if matching seats are available. If matching seats are unavailable due to shortage or other reasons, assignments may deviate from preferences."
+            },
+            "duplicateStudentId": "Duplicate Attendance Number"
+        },
+        "studentEasyInput": {
+            "title": "Easy Bulk Insert",
+            "label": "Member Names (One per line)",
+            "help": "New members will be appended after existing ones, if any."
+        },
+        "importFromCSV": {
+            "title": "CSV Import",
+            "error": "Error occurred during CSV import.",
+            "cannotLoadCSV": "Cannot load CSV. Please check the file format and save it as 'UTF-8' encoding."
+        },
+        "exportToCSV": {
+            "title": "Export",
+            "noStudents": {
+                "title": "No Member Information",
+                "description": "Please add members before exporting."
+            }
+        },
+        "downloadCSVTemplate": {
+            "title": "Download CSV Template"
+        },
+        "table": {
+            "cols": {
+                "studentId": "Attendance Number",
+                "name": "Name",
+                "fixed": "Fixed Position",
+                "condition": "Priority Placement"
+            },
+            "empty": {
+                "description": "No members have been added yet."
+            },
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete"
+            },
+            "yes": "Yes",
+            "no": "No"
+        },
+        "save": "Save",
+        "cancel": "Cancel"
+    },
+    "exec": {
+        "canExec": {
+            "title": "Ready to Execute Seating.",
+            "description1": "Choose an effect and click 'Perform Seating.' Fullscreen mode is useful for projection purposes.",
+            "description2": "After executing seating, you can rearrange seats by drag-and-drop. Rearranged data will be reflected in the exported CSV."
+        },
+        "cannotExec": {
+            "title": "Cannot Execute Seating.",
+            "toastTitle": "Mismatched Member and Seat Counts",
+            "description1": "Please ensure the number of seats matches the number of members."
+        },
+        "effects": {
+            "none": {
+                "title": "No Effect"
+            },
+            "slot": {
+                "title": "Slot Machine",
+                "stop": "Stop!"
+            },
+            "timer": {
+                "title": "Countdown"
+            }
+        },
+        "actions": {
+            "exec": "Perform Seating",
+            "fullscreen": "Fullscreen",
+            "exitFullscreen": "Exit Fullscreen",
+            "downloadResultCSV": "Download as CSV"
+        },
+        "options": {
+            "title": "Options",
+            "showRowCol": "Show Seat Position (Seat Number)",
+            "editable": "Disable Drag-and-Drop"
+        },
+        "downloadResultCSV": {
+            "noData": {
+                "title": "No Data Available",
+                "description": "Perform seating before downloading."
+            }
+        }
+    },
+    "csvSyntax": {
+        "headerIdentifier": "Attendance Number",
+        "templateHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference (Enter L or R. L = Left, R = Right)\",\"Front/Back Preference (Enter F or R. F = Front, R = Rear)\",\"Assigned Seat (Format: [r_c] for row and column)\"",
+        "resultHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference\",\"Front/Back Preference\",\"If reusing assigned seats, delete this column\",\"Assigned Seat (R_C)\",Row,Column,\"Sequential Seat Number (Top left to bottom right)\""
+    },
+    "seatSelector": {
+        "front": "Front",
+        "addRow": "Add Row",
+        "addCol": "Add Column",
+        "cannotDeleteAnymore": "Cannot Delete Further",
+        "occupied": "Reserved",
+        "col": "{col}",
+        "row": "{row}"
+    }
+}

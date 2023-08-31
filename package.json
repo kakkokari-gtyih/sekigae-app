@@ -10,12 +10,14 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@nuxthq/ui": "^2.7.0",
+    "@nuxthq/ui": "npm:@nuxthq/ui-edge@2.7.0-28213128.50212b6",
     "@nuxtjs/i18n": "8.0.0-rc.2",
     "@types/encoding-japanese": "^2.0.1",
     "@types/node": "^18.16.19",
     "encoding-japanese": "^2.0.0",
+    "github-markdown-css": "^5.2.0",
     "nuxt": "^3.6.5",
+    "schema-dts": "^1.1.2",
     "sitemap": "^7.1.1",
     "vuedraggable": "^4.1.0"
   }

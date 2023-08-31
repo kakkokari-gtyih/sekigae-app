@@ -11,10 +11,10 @@
                     :class="['block w-full h-[30px] p-3', (selectedSeat && selectedSeat.row === i && selectedSeat.col === j) ? 'bg-red-200 dark:bg-red-700' : 'bg-yellow-200 dark:bg-yellow-600']"
                     @click="selectedSeat = { row: i, col: j }">
                 </button>
-                <div v-else-if="isPreservedSeat({ row: i, col: j })" class="h-[30px] leading-[30px] text-center font-bold bg-gray-800 dark:bg-gray-400 text-white dark:text-black">
+                <div v-else-if="isPreservedSeat({ row: i, col: j })" class="h-[30px] leading-[30px] text-sm text-center font-bold bg-gray-800 dark:bg-gray-400 text-white dark:text-black">
                     {{ $t('seatSelector.occupied') }}
                 </div>
-                <div v-else class="h-[30px] p-3 bg-gray-200 dark:bg-gray-800">
+                <div v-else class="h-[30px] p-3 bg-gray-200 dark:bg-gray-700">
                 </div>
             </template>
         </div>

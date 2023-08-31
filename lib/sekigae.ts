@@ -137,6 +137,15 @@ function findBestSeat(student: Student, seats: Seat[], classroom: Classroom, con
         return seats[0];
     }
 
+    if (student.seat) {
+        const i = findSeatIndex(student.seat.row ?? -1, student.seat?.col ?? -1, seats);
+        if (i >= 0) {
+            return seats[i];
+        } else {
+            throw new Error("Fixed seat is already taken");
+        }
+    }
+
     for (const seat of seats) {
         if (bestSeat === null) {
             bestSeat = seat;

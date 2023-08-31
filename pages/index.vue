@@ -1,7 +1,7 @@
 <template>
     <div class="relative bg-slate-50 dark:bg-slate-900">
         <UContainer class="relative pt-5 space-y-6">
-            <div :class="['fixed top-0 left-0 w-screen h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-200 z-[9990] flex items-center transition-opacity duration-300', {'opacity-0 pointer-events-none': isMounted}]">
+            <div :class="['fixed top-0 left-0 w-screen h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-200 z-[9990] flex items-center transition-opacity duration-300', {'opacity-0 pointer-events-none': isMounted}]">
                 <div class="w-full text-center font-bold text-2xl">
                     <div class="flex justify-center mb-5">
                         <div class="animate-spin h-10 w-10 border-4 border-primary-500 rounded-full border-t-transparent"></div>
@@ -14,20 +14,32 @@
             </h1>
             <p>{{ $t('common.description') }}</p>
 
-            <UTabs :items="settingsTab" :default-index="0" v-model="settingsTabIndex">
+            <UTabs
+                :items="settingsTab"
+                :orientation="(screenWidth >= 640) ? 'horizontal' : 'vertical'"
+                v-model="settingsTabIndex"
+                :ui="{
+                    list: {
+                        base: 'relative group',
+                        marker: {
+                            background: 'bg-white dark:bg-gray-900 ring-0 group-[:has(:focus-visible)]:ring-2 ring-primary-500',
+                        }
+                    },
+                }"
+            >
                 <template #classroom>
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="mb-4">
-                            <I18nT keypath="classroom.colRow" tag="p" class="text-lg">
-                                <template #col><b>{{ classroom[0].length }}</b></template>
-                                <template #row><b>{{ classroom.length }}</b></template>
+                            <I18nT keypath="classroom.colRow" tag="p" class="sm:text-lg">
+                                <template #col><b>{{ classroom.length }}</b></template>
+                                <template #row><b>{{ classroom[0].length }}</b></template>
                                 <template #seatCount><b>{{ availableSeats }}</b></template>
                                 <template #studentCount><b>{{ students.length }}</b></template>
                             </I18nT>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('classroom.description') }}</p>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('classroom.description') }}</p>
                         </div>
-                        <div class="w-full grid gap-1" :style="`grid-template-columns: auto repeat(${classroom.length}, 1fr) auto`">
-                            <div :style="`grid-column: 1 / ${classroom.length + 3}`" class="text-center text-lg font-bold p-1">
+                        <div class="w-full grid gap-1" :class="$style.seatDefinerRoot" style="grid-template-columns: auto repeat(var(--col-count), 1fr) auto">
+                            <div style="grid-column: 1 / calc(var(--col-count) + 3)" class="text-center text-lg font-bold p-1">
                                 <UIcon name="i-heroicons-arrow-small-up"
                                     style="height: 1em; width: 1em; vertical-align: -.125em;" />
                                 {{ $t('seatSelector.front') }}
@@ -37,26 +49,25 @@
                             <div class="space-y-1 grid grid-cols-1 h-full">
                                 <div class="h-1"></div>
                                 <UButton v-for="seat, i in classroom[0]" :block="true" color="white" icon="i-heroicons-x-mark"
-                                    @click="delCol(i)">
+                                    @click="delRow(i)">
                                 </UButton>
                             </div>
                             <div v-for="row, i in classroom" class="space-y-1">
-                                <UButton :block="true" color="white" icon="i-heroicons-x-mark" @click="delRow(i)">
+                                <UButton :block="true" color="white" icon="i-heroicons-x-mark" @click="delCol(i)">
                                 </UButton>
                                 <button v-for="seat, j in row"
-                                    :class="['block w-full min-h-[60px] p-3', seat ? 'bg-yellow-200 dark:bg-yellow-600' : 'bg-gray-200 dark:bg-gray-800']"
+                                    :class="['block w-full min-h-[60px] p-3', seat ? 'bg-yellow-200 dark:bg-yellow-600' : 'bg-gray-200 dark:bg-gray-700']"
                                     @click="classroom[i][j] = !seat">
                                 </button>
                             </div>
                             <div class="space-y-1 grid h-full" style="grid-template-rows: 32px 1fr;">
                                 <div></div>
-                                <UButton :block="true" icon="i-heroicons-plus" style="writing-mode: vertical-rl;" @click="addRow()">
-                                    {{ $t('seatSelector.addRow') }}
+                                <UButton :block="true" icon="i-heroicons-plus" class="flex-col space-y-2" @click="addCol()">
+                                    <span style="writing-mode: vertical-rl;">{{ $t('seatSelector.addCol') }}</span>
                                 </UButton>
                             </div>
-                            <UButton :block="true" icon="i-heroicons-plus" :style="`grid-column: 2 / ${classroom.length + 2}`"
-                                @click="addCol()">
-                                {{ $t('seatSelector.addCol') }}
+                            <UButton :block="true" icon="i-heroicons-plus" style="grid-column: 2 / calc(var(--col-count) + 2)" @click="addRow()">
+                                {{ $t('seatSelector.addRow') }}
                             </UButton>
                         </div>
                     </UCard>
@@ -64,16 +75,16 @@
 
                 <template #students>
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
-                        <div class="flex items-center mb-4">
-                            <div>
-                                <I18nT keypath="students.seatsAndStudents" tag="p" class="text-lg">
+                        <div class="flex flex-col sm:flex-row items-center mb-4">
+                            <div class="mb-4 sm:mb-0">
+                                <I18nT keypath="students.seatsAndStudents" tag="p" class="sm:text-lg">
                                     <template #seatCount><b>{{ availableSeats }}</b></template>
                                     <template #studentCount><b>{{ students.length }}</b></template>
                                 </I18nT>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('students.description') }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('students.privacy') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('students.description') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('students.privacy') }}</p>
                             </div>
-                            <div class="ml-auto">
+                            <div class="flex-shrink-0 sm:ml-auto">
                                 <UButton icon="i-heroicons-user-plus" :label="$t('students.studentEdit.title')" color="primary" class="mr-2"
                                     @click="openStudentEdit()" />
                                 <UDropdown :items="[
@@ -118,8 +129,8 @@
                             :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: $t('common.loading') }"
                             :loading="isUploadingCSV"
                             :ui="{
-                                th: { size: 'text-base' },
-                                td: { size: 'text-base' },
+                                th: { size: 'sm:text-base' },
+                                td: { size: 'sm:text-base' },
                             }">
                             <template #empty-state>
                                 <div class="flex flex-col items-center justify-center py-6 space-y-3">
@@ -160,17 +171,17 @@
                     <UCard>
                         <div class="mb-4">
                             <template v-if="availableSeats === students.length">
-                                <p class="text-lg font-bold text-primary-500">{{ $t('exec.canExec.title') }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.canExec.description1') }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.canExec.description2') }}</p>
+                                <p class="sm:text-lg font-bold text-primary-500">{{ $t('exec.canExec.title') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.canExec.description1') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.canExec.description2') }}</p>
                             </template>
                             <template v-else>
-                                <p class="text-lg font-bold text-red-700">{{ $t('exec.cannotExec.title') }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.cannotExec.description1') }}</p>
+                                <p class="sm:text-lg font-bold text-red-700">{{ $t('exec.cannotExec.title') }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('exec.cannotExec.description1') }}</p>
                             </template>
                         </div>
-                        <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden p-1 bg-white dark:bg-slate-950" :class="isFullScreen && 'p-6 justify-center'">
-                            <div class="mb-4 flex space-x-2 justify-center">
+                        <div ref="sekigaeResultView" class="flex flex-col flex-1 overflow-y-auto overflow-x-hidden p-1 bg-white dark:bg-gray-900" :class="isFullScreen && 'p-6 justify-center'">
+                            <div class="mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 justify-center">
                                 <USelect icon="i-heroicons-sparkles-solid" v-model="effect" option-attribute="name" :disabled="effectState === 'running'"
                                     :options="[{ name: $t('exec.effects.none.title'), value: 'none' }, { name: $t('exec.effects.slot.title'), value: 'slot' }, { name: $t('exec.effects.timer.title'), value: 'timer' }]" />
                                 <UButton color="primary" variant="solid" :label="$t('exec.actions.exec')" icon="i-heroicons-play" :disabled="effectState === 'running'"
@@ -178,7 +189,7 @@
                                 <div class="border-l"></div>
                                 <UButton color="white" :icon="isFullScreen ? 'i-heroicons-arrows-pointing-in' : 'i-heroicons-arrows-pointing-out'" :label="isFullScreen ? $t('exec.actions.exitFullscreen') : $t('exec.actions.fullscreen')" @click="toggleFullScreen()" />
                                 <UPopover>
-                                    <UButton color="white" :label="$t('exec.options.title')" trailing-icon="i-heroicons-chevron-down-20-solid" />
+                                    <UButton color="white" :block="true" :label="$t('exec.options.title')" trailing-icon="i-heroicons-chevron-down-20-solid" />
 
                                     <template #panel>
                                         <UCard>
@@ -246,7 +257,7 @@
                         <div v-if="enableFixedPosition" class="pb-2">
                             <SeatSelector :classroom="classroom" :initial="currentEditObject.seat" :disabled-seats="manuallySelectedSeats"
                                 @change="studentEditSeatHandler" />
-                            <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">{{ $t('students.studentEdit.fixedPosition.description') }}</div>
+                            <div class="mt-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">{{ $t('students.studentEdit.fixedPosition.description') }}</div>
                         </div>
                         <div class="py-1 flex items-center">
                             <UToggle v-model="enableCondition" />
@@ -275,7 +286,7 @@
                                 <URadio v-model="currentEditObject.chooseOptions.y" :value="null" name="chooseOptionsFB"
                                     :label="$t('students.studentEdit.condition.yNone')" />
                             </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                                 <span class="text-yellow-700 dark:text-yellow-400 font-bold">{{ $t('students.studentEdit.condition.disclaimerTitle') }}</span>
                                 {{ $t('students.studentEdit.condition.disclaimer') }}
                             </div>
@@ -300,7 +311,7 @@
                                 @click="modalState = null" />
                         </div>
                     </template>
-                    <UFormGroup name="students" :label="$t('students.studentEasyInput.label')" :ui="{ help: 'mt-2 text-sm text-gray-500 dark:text-gray-400' }" :help="$t('students.studentEasyInput.help')">
+                    <UFormGroup name="students" :label="$t('students.studentEasyInput.label')" :ui="{ help: 'mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400' }" :help="$t('students.studentEasyInput.help')">
                         <UTextarea :autofocus="true" :rows="10" v-model="studentEasyInput" />
                     </UFormGroup>
                     <template #footer>
@@ -318,6 +329,11 @@
 </template>
 
 <style module>
+.seatDefinerRoot {
+    --col-count: v-bind(classroom.length);
+    --row-count: v-bind(classroom[0].length);
+}
+
 .countAnim :global {
     animation-name: count-anim;
     animation-duration: 950ms;
@@ -347,7 +363,9 @@ import { arrangeSeats, assignSeats, getSeatNumber, extractStudentsFromSeats } fr
 
 const isMounted = ref<boolean>(false);
 onMounted(() => {
-    isMounted.value = true;
+    setTimeout(() => {
+        isMounted.value = true;
+    }, 100);
 });
 
 const { t } = useI18n();
@@ -389,11 +407,11 @@ const classroom = ref<Classroom>([
 const availableSeats = computed(() => classroom.value.map((row) => row.reduce((p, c) => p + (c ? 1 : 0), 0)).reduce((p, c) => p + c));
 const manuallySelectedSeats = computed<Seat[]>(() => students.value.map((e) => e.seat ? e.seat : null).filter<Seat>((e) => e !== null));
 
-function addRow() {
+function addCol() {
     classroom.value.push(new Array(classroom.value[0].length).fill(true));
 }
 
-function delRow(n: number) {
+function delCol(n: number) {
     if (classroom.value.length <= 1) {
         alert(t('seatSelector.cannotDeleteAnymore'));
         return;
@@ -401,13 +419,13 @@ function delRow(n: number) {
     classroom.value.splice(n, 1);
 }
 
-function addCol() {
+function addRow() {
     classroom.value.forEach((v) => {
         v.push(true);
     });
 }
 
-function delCol(n: number) {
+function delRow(n: number) {
     if (classroom.value[0].length <= 1) {
         alert(t('seatSelector.cannotDeleteAnymore'));
         return;
@@ -466,8 +484,7 @@ function importFromCSV() {
                         if (rawStudents[0].match(new RegExp(`^(")*${t('csvSyntax.headerIdentifier')}`))) {
                             rawStudents.shift();
                         }
-
-                        const parsedStudents = rawStudents.filter((v) => v.includes(',')).map<Student>((v) => {
+                        const parsedStudents = rawStudents.filter((v) => v.includes(',') && !isNaN(parseInt(v.split(',')[0].replaceAll("\"", "")))).map<Student>((v) => {
                             let parsedStudent = v.split(",");
                             let seat: Seat | undefined = undefined;
                             //@ts-ignore
@@ -577,7 +594,7 @@ function exportToCSV() {
                 e.furigana ?? '',
                 x,
                 y,
-                (e.seat) ? [(e.seat.col + 1), (e.seat.row + 1)].join('_') : '',
+                (e.seat) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
             ].map((f) => `"${f}"`).join(',');
         });
 
@@ -785,8 +802,11 @@ function execSekigae() {
     }
 }
 
-function changeSeatHandler(to: ClassroomWithStudents): void {
-    console.log('fired', to);
+function changeSeatHandler(to: ClassroomWithStudents | undefined): void {
+    if (!to) {
+        result.value = undefined;
+        return;
+    }
     result.value = extractStudentsFromSeats(to);
 }
 
@@ -878,12 +898,12 @@ function exportResultToCSV() {
         e.studentId.toString(),
         e.name ?? '',
         e.furigana ?? '',
-        e.chooseOptions.x ? e.chooseOptions.x.slice(0, 1).toUpperCase() : '',
-        e.chooseOptions.y ? e.chooseOptions.y.slice(0, 1).toUpperCase() : '',
+        (e.chooseOptions && e.chooseOptions.x) ? e.chooseOptions.x.slice(0, 1).toUpperCase() : '',
+        (e.chooseOptions && e.chooseOptions.y) ? e.chooseOptions.y.slice(0, 1).toUpperCase() : '',
         '',
-        (e.seat) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
-        (e.seat) ? (e.seat.row + 1) : '',
-        (e.seat) ? (e.seat.col + 1) : '',
+        (e.seat && e.seat.row && e.seat.col) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
+        (e.seat && e.seat.row) ? (e.seat.row + 1) : '',
+        (e.seat && e.seat.col) ? (e.seat.col + 1) : '',
         (e.seat) ? getSeatNumber(e.seat, classroom.value).toString() : '',
     ].map((f) => `"${f}"`).join(','));
     out.unshift(t('csvSyntax.resultHeaderRow'));
@@ -893,6 +913,7 @@ function exportResultToCSV() {
 const isFullScreen = ref<boolean>(false);
 function resetFullScreenState() {
     if (!document.fullscreenElement) {
+        screen.orientation.unlock();
         isFullScreen.value = false;
     }
 }
@@ -901,16 +922,68 @@ function toggleFullScreen() {
     if (process.client) {
         if (document.fullscreenElement) {
             document.exitFullscreen().then(() => {
+                screen.orientation.unlock();
                 isFullScreen.value = false;
                 document.removeEventListener('fullscreenchange', resetFullScreenState);
             });
         } else if(sekigaeResultView.value) {
             sekigaeResultView.value?.requestFullscreen().then(() => {
-                isFullScreen.value = true;
-                document.addEventListener('fullscreenchange', resetFullScreenState);
+                screen.orientation.lock('landscape').catch((error) => {
+                    console.warn(error);
+                }).finally(() => {
+                    isFullScreen.value = true;
+                    document.addEventListener('fullscreenchange', resetFullScreenState);
+                });
             });
         }
     }
 }
 // PostSekigae END
+
+// RouteGuard / WidthWatcher START
+const hasChanged = ref<boolean>(false);
+
+const screenWidth = ref<number>(1280);
+function adjustWidth() {
+    screenWidth.value = document.documentElement.clientWidth;
+}
+if (process.client) {
+    onMounted(() => {
+        adjustWidth();
+    });
+    window.addEventListener('resize', adjustWidth);
+}
+
+function nativeBeforeUnload(ev: Event) {
+    ev.preventDefault();
+    // @ts-ignore
+    ev.returnValue = '';
+}
+
+onBeforeRouteLeave((to, from, next) => {
+    if (!process.client) {
+        next();
+        return;
+    }
+    const answer = !hasChanged.value || window.confirm(t('common.unsavedChanges'));
+    if (answer) {
+        window.removeEventListener('beforeunload', nativeBeforeUnload);
+        window.removeEventListener('resize', adjustWidth);
+        next();
+    } else {
+        next(false);
+    }
+});
+
+const changeWatcher = watch([students, classroom, result], () => {
+    hasChanged.value = true;
+    if (process.client) {
+        window.addEventListener('beforeunload', nativeBeforeUnload);
+    }
+    // ウォッチャー停止
+    changeWatcher();
+}, {
+    deep: true,
+});
+// RouteGuard END
 </script>

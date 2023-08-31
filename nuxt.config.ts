@@ -1,10 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// 公開時のドメイン（末尾スラッシュなし）
 import genSitemap from './scripts/gen-sitemap';
+import type { LocaleObject } from '@nuxtjs/i18n/dist/runtime/composables';
 
-const baseUrl = 'https://misskey-hub.net';
+// 公開時のドメイン（末尾スラッシュなし）
+const baseUrl = 'https://sekigae.app';
 
-export const locales = [
+export const locales: LocaleObject[] = [
 	{ code: 'ja', iso: 'ja-JP', name: '日本語' },
 	{ code: 'en', iso: 'en-US', name: 'English' },
 ];
@@ -42,6 +43,7 @@ export default defineNuxtConfig({
 		locales,
 		defaultLocale: 'ja',
 		strategy: 'prefix',
+        trailingSlash: true,
     },
     nitro: {
 		hooks: {
@@ -57,6 +59,7 @@ export default defineNuxtConfig({
     },
     experimental: {
 		inlineSSRStyles: false,
+        componentIslands: true,
 		payloadExtraction: true,
 	},
 })
