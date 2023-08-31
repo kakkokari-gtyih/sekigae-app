@@ -11,6 +11,9 @@
             "tondabayashiHs": "Tondabayashi HS"
         }
     },
+    "seo": {
+        "defaultDescription": "With our unique algorithm, this app makes it easy for everyone's seating preferences to be accommodated. It also includes CSV import and export functions, making post-rearrangement administrative tasks a breeze!"
+    },
     "tabs": {
         "classroom": "① Seat Arrangement",
         "students": "② Member Information",
