@@ -832,9 +832,9 @@ function exportResultToCSV() {
         (e.chooseOptions && e.chooseOptions.x) ? e.chooseOptions.x.slice(0, 1).toUpperCase() : '',
         (e.chooseOptions && e.chooseOptions.y) ? e.chooseOptions.y.slice(0, 1).toUpperCase() : '',
         '',
-        (e.seat && e.seat.row && e.seat.col) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
-        (e.seat && e.seat.row) ? (e.seat.row + 1) : '',
-        (e.seat && e.seat.col) ? (e.seat.col + 1) : '',
+        (e.seat && e.seat.row !== null && e.seat.col !== null) ? [(e.seat.row + 1).toString(), (e.seat.col + 1).toString()].join('_') : '',
+        (e.seat && e.seat.row !== null) ? (e.seat.row + 1).toString() : '',
+        (e.seat && e.seat.col !== null) ? (e.seat.col + 1).toString() : '',
         (e.seat) ? getSeatNumber(e.seat, classroom.value).toString() : '',
     ].map((f) => `"${f}"`).join(','));
     out.unshift(t('csvSyntax.resultHeaderRow'));
