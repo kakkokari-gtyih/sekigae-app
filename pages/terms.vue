@@ -6,7 +6,7 @@
             </h1>
             <UCard>
                 <div class="markdown-body" v-if="locale === 'ja'">
-                    <p>この利用規約（以下、「本規約」といいます。）は、「大阪府立富田林高等学校」および「かっこかり」（以下、まとめて「運営者」といいます。）が共同で運営ないし提供する、高機能席替えアプリ「Sekigae.app」（以下、「当サービス」といいます。）の利用にかかる条件を定めるものです。このウェブサイト（<code>sekigae.app</code>）を閲覧する者、または当サービスにインターネット経由でアクセスして利用する者（以下、まとめて「ユーザー」といいます。）には、本規約に従って、当サービスをご利用いただきます。</p>
+                    <p>この利用規約（以下、「本規約」といいます。）は、「かっこかり」（以下、「運営者」といいます。）が共同で運営ないし提供する、高機能席替えアプリ「Sekigae.app」（以下、「当サービス」といいます。）の利用にかかる条件を定めるものです。このウェブサイト（<code>sekigae.app</code>）を閲覧する者、または当サービスにインターネット経由でアクセスして利用する者（以下、まとめて「ユーザー」といいます。）には、本規約に従って、当サービスをご利用いただきます。</p>
                     <p>なお、この規約は、<strong>オープンソースソフトウェアである本ソフトウェア、およびそれを利用したサービスに関して適用される利用規約ではありません。</strong><code>sekigae.app</code>上でのみ適用される規約であることにご留意ください。</p>
                     <p>本ソフトウェアそのものは、<a href="https://github.com/kakkokari-gtyih/sekigae-app">ソースコード</a>に示されている通り、GNU Affero General Public License v3.0の下で提供されます。また、当サービス（<code>sekigae.app</code>）以外で本ソフトウェアを利用したサービスがある場合、その利用条件等は、当該サービスの提供者にお問い合わせください。</p>
                     <h2 id="-1-">第1条（適用）</h2>
@@ -112,7 +112,7 @@
                     </ul>
                 </div>
                 <div class="markdown-body" v-else>
-                    <p>This Terms of Use Agreement ("Agreement") sets forth the terms and conditions for the use of the high-functionality seat assignment application "Sekigae.app" (hereinafter referred to as the "Service") jointly operated or provided by "Osaka Prefectural Tomitabayashi High School" and "Kakkokari" (hereinafter collectively referred to as the "Operator"). By browsing this website (<code>sekigae.app</code>) or accessing and using the Service via the internet, you (hereinafter referred to as the "User") agree to use the Service in accordance with this Agreement.</p>
+                    <p>This Terms of Use Agreement ("Agreement") sets forth the terms and conditions for the use of the high-functionality seat assignment application "Sekigae.app" (hereinafter referred to as the "Service") operated or provided by and "Kakkokari" (hereinafter referred to as the "Operator"). By browsing this website (<code>sekigae.app</code>) or accessing and using the Service via the internet, you (hereinafter referred to as the "User") agree to use the Service in accordance with this Agreement.</p>
 
                     <p>Please note that this Agreement is not applicable to open-source software and services using it. It applies exclusively to <code>sekigae.app</code>.</p>
 
