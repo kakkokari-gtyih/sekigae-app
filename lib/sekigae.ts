@@ -255,9 +255,9 @@ export function extractStudentsFromSeats(seats: ClassroomWithStudents): Student[
 
 /**
  * 指定された座席に対応する利用可能な座席の左からの通し番号を取得
- * @param {Seat} seat - 対象の座席
+ * @param {Seat} seat 対象の座席
  * @param {Classroom} classroom 座席配置の二次元配列
- * @returns {number} - 座席の左からの通し番号。利用可能な座席でない場合は`-1`を返します。
+ * @returns {number} 座席の左からの通し番号。利用可能な座席でない場合は`-1`を返します。
  */
 export function getSeatNumber(seat: Seat, classroom: Classroom): number {
     let seatNumber = 1;
