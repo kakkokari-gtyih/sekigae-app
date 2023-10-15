@@ -282,8 +282,10 @@ function doPostSeatAdjustment(students: Student[], classroom: Classroom): Studen
             reAssignedStudents[replaceStudentIndex].seat = { ...targetStudent.seat };
             targetStudent.seat = replaceStudentSeat;
             console.log({ targetStudent, studentToBeReplaced: reAssignedStudents[replaceStudentIndex] });
-            reAssignedStudents.unshift(targetStudent);
         }
+
+        // 最悪決まらなかったとしても座席表は埋める
+        reAssignedStudents.unshift(targetStudent);
     });
 
     return reAssignedStudents;
