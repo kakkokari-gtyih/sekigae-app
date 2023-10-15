@@ -227,9 +227,9 @@
             
             </UTabs>
 
-            <UModal v-model="modalIsOpen" @close="resetStudentEdit()">
+            <UModal v-model="modalIsOpen" :ui="{ base: 'overflow-visible max-w-lg w-full', }" @close="resetStudentEdit()">
                 <UCard v-if="modalState === 'studentEdit'"
-                    :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                    :ui="{ base: 'overflow-visible', ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                     <template #header>
                         <div class="flex items-center justify-between">
                             <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
@@ -241,13 +241,13 @@
                     </template>
                     <div class="space-y-2" v-if="currentEditObject">
                         <UFormGroup name="studentId" :label="$t('students.studentEdit.studentId')">
-                            <UInput type="number" v-model="currentEditObject.studentId" />
+                            <UInput id="studentId" type="number" v-model="currentEditObject.studentId" />
                         </UFormGroup>
                         <UFormGroup name="name" :label="$t('students.studentEdit.name')" :hint="$t('students.studentEdit.optional')">
-                            <UInput v-model="currentEditObject.name" />
+                            <UInput id="name" v-model="currentEditObject.name" />
                         </UFormGroup>
-                        <UFormGroup name="furigana" :label="$t('students.studentEdit.furigana')" :hint="$t('students.studentEdit.optional')">
-                            <UInput v-model="currentEditObject.furigana" />
+                        <UFormGroup name="furigana" :label="$t('students.studentEdit.furigana')" :hint="$t('students.studentEdit.optional')" class="pb-2">
+                            <UInput id="furigana" v-model="currentEditObject.furigana" />
                         </UFormGroup>
                         <div class="py-1 flex items-center">
                             <UToggle v-model="enableFixedPosition" />
@@ -290,6 +290,21 @@
                                 <span class="text-yellow-700 dark:text-yellow-400 font-bold">{{ $t('students.studentEdit.condition.disclaimerTitle') }}</span>
                                 {{ $t('students.studentEdit.condition.disclaimer') }}
                             </div>
+                            <hr>
+                            <UFormGroup name="distantStudentIds" :label="$t('students.studentEdit.distantOrPairStudent.distantStudent')" :help="$t('students.studentEdit.distantOrPairStudent.distantStudentDescription')">
+                                <div v-if="Array.isArray(currentEditDistancedStudentIds)">
+                                    <USelectMenu id="distantStudentIds" multiple searchable :options="[...students]" v-model="currentEditDistancedStudentIds" value-attribute="studentId" option-attribute="name" :search-attributes="['name', 'furigana']">
+                                        <template #label>{{ (currentEditDistancedStudentIds && currentEditDistancedStudentIds.length > 0) ? $t('common.Xselected', [currentEditDistancedStudentIds.length]) : $t('common.pleaseChoose') }}</template>
+                                    </USelectMenu>
+                                </div>
+                            </UFormGroup>
+                            <UFormGroup name="pairStudentId" :label="$t('students.studentEdit.distantOrPairStudent.pairStudent')" class="pb-2">
+                                <div>
+                                    <USelectMenu id="pairStudentId" searchable :options="[{ studentId: null, name: t('common.pleaseChoose') } ,...students]" v-model="(currentEditObject.chooseOptions.pairStudentId as number)" value-attribute="studentId" option-attribute="name" :search-attributes="['name', 'furigana']">
+                                        <template #label>{{ students.find((v) => v.studentId === (currentEditObject.chooseOptions.pairStudentId ?? -1))?.name ?? $t('common.pleaseChoose') }}</template>
+                                    </USelectMenu>
+                                </div>
+                            </UFormGroup>
                         </div>
                     </div>
                     <template #footer>
@@ -360,6 +375,7 @@
 <script setup lang="ts">
 import type { Classroom, ClassroomWithStudents, Student, Seat } from '@/lib/sekigae';
 import { arrangeSeats, assignSeats, getSeatNumber, extractStudentsFromSeats } from '@/lib/sekigae';
+import { csvSchemaKVs, createGetCSVIndex } from '@/lib/csvDefs';
 
 const isMounted = ref<boolean>(false);
 onMounted(() => {
@@ -480,40 +496,54 @@ function importFromCSV() {
 
                     if (typeof result === 'string') {
                         const rawStudents = result.split(/\n/g);
+                        let csvVersion: string = 'v1';
 
                         if (rawStudents[0].match(new RegExp(`^(")*${t('csvSyntax.headerIdentifier')}`))) {
+                            const detectedVersion = [...rawStudents[0].split(',')].pop().replace(/[\n\r\s]/g, '');
+                            if (Object.keys(csvSchemaKVs).includes(detectedVersion)) {
+                                csvVersion = detectedVersion;
+                            }
                             rawStudents.shift();
                         }
+
+                        console.log('[CSV Syntax Version]', csvVersion);
+
+                        const ci = createGetCSVIndex(csvVersion);
+
                         const parsedStudents = rawStudents.filter((v) => v.includes(',') && !isNaN(parseInt(v.split(',')[0].replaceAll("\"", "")))).map<Student>((v) => {
                             let parsedStudent = v.split(",");
                             let seat: Seat | undefined = undefined;
                             //@ts-ignore
                             parsedStudent = parsedStudent.map((e) => e.match(/^"(.*)"$/) !== null ? e.match(/^"(.*)"$/)[1] : e);
 
-                            switch (parsedStudent[3]?.toUpperCase() ?? '') {
-                                case 'L':
-                                    parsedStudent[3] = 'left';
-                                    break;
-                                case 'R':
-                                    parsedStudent[3] = 'right';
-                                    break;
-                                default:
-                                    parsedStudent[3] = '';
+                            if (ci('chooseOptions.x') > 0) {
+                                switch (parsedStudent[ci('chooseOptions.x')]?.toUpperCase() ?? '') {
+                                    case 'L':
+                                        parsedStudent[ci('chooseOptions.x')] = 'left';
+                                        break;
+                                    case 'R':
+                                        parsedStudent[ci('chooseOptions.x')] = 'right';
+                                        break;
+                                    default:
+                                        parsedStudent[ci('chooseOptions.x')] = '';
+                                }
                             }
 
-                            switch (parsedStudent[4]?.toUpperCase() ?? '') {
-                                case 'F':
-                                    parsedStudent[4] = 'front';
-                                    break;
-                                case 'R':
-                                    parsedStudent[4] = 'rear';
-                                    break;
-                                default:
-                                    parsedStudent[4] = '';
+                            if (ci('chooseOptions.y') > 0) {
+                                switch (parsedStudent[ci('chooseOptions.y')]?.toUpperCase() ?? '') {
+                                    case 'F':
+                                        parsedStudent[ci('chooseOptions.y')] = 'front';
+                                        break;
+                                    case 'R':
+                                        parsedStudent[ci('chooseOptions.y')] = 'rear';
+                                        break;
+                                    default:
+                                        parsedStudent[ci('chooseOptions.y')] = '';
+                                }
                             }
 
-                            if (parsedStudent[5].includes('_')) {
-                                let p = parsedStudent[5].split('_');
+                            if (ci('seat') > 0 && parsedStudent[ci('seat')].includes('_')) {
+                                let p = parsedStudent[ci('seat')].split('_');
                                 seat = {
                                     col: (parseInt(p[0]) - 1),
                                     row: (parseInt(p[1]) - 1),
@@ -521,12 +551,14 @@ function importFromCSV() {
                             }
 
                             return {
-                                studentId: parseInt(parsedStudent[0]),
-                                name: parsedStudent[1] == '' ? undefined : parsedStudent[1],
-                                furigana: parsedStudent[2] == '' ? undefined : parsedStudent[2],
+                                studentId: parseInt(parsedStudent[ci('studentId')]),
+                                name: parsedStudent[ci('name')] == '' ? undefined : parsedStudent[ci('name')],
+                                furigana: parsedStudent[ci('furigana')] == '' ? undefined : parsedStudent[ci('furigana')],
                                 chooseOptions: {
-                                    x: parsedStudent[3] == '' ? undefined : parsedStudent[3],
-                                    y: parsedStudent[4] == '' ? undefined : parsedStudent[4],
+                                    x: ci('chooseOptions.x') < 0 ? undefined : parsedStudent[ci('chooseOptions.x')],
+                                    y: ci('chooseOptions.y') < 0 ? undefined : parsedStudent[ci('chooseOptions.y')],
+                                    distantStudentIds: ci('chooseOptions.distantStudentIds') < 0 ? undefined : parsedStudent[ci('chooseOptions.distantStudentIds')].split(',').filter((v) => v !== '').map((e) => parseInt(e)),
+                                    pairStudentId: ci('chooseOptions.pairStudentId') < 0 ? undefined : parseInt(parsedStudent[ci('chooseOptions.pairStudentId')]),
                                 },
                                 seat,
                             } as Student;
@@ -592,13 +624,16 @@ function exportToCSV() {
                 e.studentId.toString(),
                 e.name ?? '',
                 e.furigana ?? '',
-                x,
-                y,
-                (e.seat) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
+                (e.chooseOptions && e.chooseOptions.x) ? e.chooseOptions.x.slice(0, 1).toUpperCase() : '',
+                (e.chooseOptions && e.chooseOptions.y) ? e.chooseOptions.y.slice(0, 1).toUpperCase() : '',
+                (e.chooseOptions && e.chooseOptions.distantStudentIds) ? e.chooseOptions.distantStudentIds.join('_') : '',
+                (e.chooseOptions && e.chooseOptions.pairStudentId) ? e.chooseOptions.pairStudentId.toString() : '',
+                (e.seat && e.seat.row && e.seat.col) ? [(e.seat.row + 1), (e.seat.col + 1)].join('_') : '',
+                '',
             ].map((f) => `"${f}"`).join(',');
         });
 
-        stringified.unshift(t('csvSyntax.templateHeaderRow'));
+        stringified.unshift(t('csvSyntax.v2TemplateHeaderRow'));
 
         downloadCSVFile(stringified.join('\r\n'), 'sekigae.csv');
     }
@@ -623,6 +658,7 @@ const currentEditId = ref<number>();
 let currentEditIndex: number;
 const enableFixedPosition = ref<boolean>(false);
 const enableCondition = ref<boolean>(false);
+const currentEditDistancedStudentIds = ref<number[]>([]);
 
 watch(enableFixedPosition, (to) => {
     if (!currentEditObject.value) {
@@ -645,12 +681,16 @@ watch(enableCondition, (to) => {
     }
 
     if (to && !currentEditObject.value.chooseOptions) {
+        currentEditDistancedStudentIds.value = [];
         currentEditObject.value.chooseOptions = {
             x: null,
             y: null,
+            distantStudentIds: [],
+            pairStudentId: null,
         };
     } else if (!to) {
         currentEditObject.value.chooseOptions = undefined;
+        currentEditDistancedStudentIds.value = [];
     }
 });
 
@@ -667,7 +707,8 @@ function openStudentEdit(id?: number) {
         currentEditIndex = students.value?.findIndex((v) => v.studentId === id);
         currentEditObject.value = JSON.parse(JSON.stringify(students.value?.find((v) => v.studentId === id)));
         enableFixedPosition.value = (currentEditObject.value?.seat !== undefined);
-        enableCondition.value = Object.values(currentEditObject.value?.chooseOptions ?? {}).some((e) => ['left', 'right', 'front', 'rear'].includes(e ?? ''));
+        currentEditDistancedStudentIds.value = (currentEditObject.value?.chooseOptions && Array.isArray(currentEditObject.value?.chooseOptions?.distantStudentIds)) ? currentEditObject.value?.chooseOptions?.distantStudentIds : [];
+        enableCondition.value = Object.values(currentEditObject.value?.chooseOptions ?? {}).some((e) => ['left', 'right', 'front', 'rear'].includes(e ?? '')) || (currentEditObject.value?.chooseOptions?.distantStudentIds && currentEditObject.value?.chooseOptions?.distantStudentIds.length > 0) || (currentEditObject.value?.chooseOptions?.pairStudentId != null);
     } else {
         currentEditObject.value = { studentId: students.value.length + 1 };
     }
@@ -684,6 +725,16 @@ function resetStudentEdit() {
 function saveStudentEdit() {
     if (currentEditObject.value === undefined) {
         return;
+    }
+
+    if (currentEditDistancedStudentIds.value.length > 0) {
+        if (!currentEditObject.value.chooseOptions) {
+            currentEditObject.value.chooseOptions = {
+                distantStudentIds: currentEditDistancedStudentIds.value,
+            };
+        } else {
+            currentEditObject.value.chooseOptions.distantStudentIds = currentEditDistancedStudentIds.value;
+        }
     }
 
     if (!currentEditId.value && students.value?.some((v) => v.studentId === currentEditObject.value?.studentId)) {
@@ -831,13 +882,16 @@ function exportResultToCSV() {
         e.furigana ?? '',
         (e.chooseOptions && e.chooseOptions.x) ? e.chooseOptions.x.slice(0, 1).toUpperCase() : '',
         (e.chooseOptions && e.chooseOptions.y) ? e.chooseOptions.y.slice(0, 1).toUpperCase() : '',
+        (e.chooseOptions && e.chooseOptions.distantStudentIds) ? e.chooseOptions.distantStudentIds.join('_') : '',
+        (e.chooseOptions && e.chooseOptions.pairStudentId) ? e.chooseOptions.pairStudentId.toString() : '',
         '',
         (e.seat && e.seat.row !== null && e.seat.col !== null) ? [(e.seat.row + 1).toString(), (e.seat.col + 1).toString()].join('_') : '',
         (e.seat && e.seat.row !== null) ? (e.seat.row + 1).toString() : '',
         (e.seat && e.seat.col !== null) ? (e.seat.col + 1).toString() : '',
         (e.seat) ? getSeatNumber(e.seat, classroom.value).toString() : '',
+        ''
     ].map((f) => `"${f}"`).join(','));
-    out.unshift(t('csvSyntax.resultHeaderRow'));
+    out.unshift(t('csvSyntax.v2ResultHeaderRow'));
     downloadCSVFile(out.join('\r\n'), 'sekigaeResult.csv');
 }
 

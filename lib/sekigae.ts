@@ -20,6 +20,8 @@ export type Student = {
     chooseOptions?: {
         x?: null | 'left' | 'right';
         y?: null | 'front' | 'rear';
+        distantStudentIds?: number[];
+        pairStudentId: number | null;
     };
 };
 
@@ -79,28 +81,27 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
             return 0;
         }
 
-        const aOptions = a.chooseOptions || {};
-        const bOptions = b.chooseOptions || {};
+        const aOptions = a.chooseOptions;
+        const bOptions = b.chooseOptions;
 
         const aPriority =
             (a.seat ? 16 : 0) +
-            (aOptions.y === 'front' ? 8 : 0) +
-            (aOptions.y === 'rear' ? 4 : 0) +
-            (aOptions.x === 'left' ? 2 : 0) +
-            (aOptions.x === 'right' ? 1 : 0);
+            (aOptions?.y === 'front' ? 8 : 0) +
+            (aOptions?.y === 'rear' ? 4 : 0) +
+            (aOptions?.x === 'left' ? 2 : 0) +
+            (aOptions?.x === 'right' ? 1 : 0);
 
         const bPriority =
             (b.seat ? 16 : 0) +
-            (bOptions.y === 'front' ? 8 : 0) +
-            (bOptions.y === 'rear' ? 4 : 0) +
-            (bOptions.x === 'left' ? 2 : 0) +
-            (bOptions.x === 'right' ? 1 : 0);
+            (bOptions?.y === 'front' ? 8 : 0) +
+            (bOptions?.y === 'rear' ? 4 : 0) +
+            (bOptions?.x === 'left' ? 2 : 0) +
+            (bOptions?.x === 'right' ? 1 : 0);
 
         return bPriority - aPriority;
     });
 
-
-    const assignedStudents: Student[] = [];
+    let assignedStudents: Student[] = [];
 
     for (const student of sortedStudents) {
         if (student.seat && student.seat.col && student.seat.row && considerOptions) {
@@ -119,7 +120,47 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
         seats.splice(findSeatIndex(row, col, seats), 1);
     }
 
+    if (considerOptions) {
+        assignedStudents = doPostSeatAdjustment([...assignedStudents], classroom);
+    }
+
     return assignedStudents.sort((a, b) => a.studentId - b.studentId);
+}
+
+/**
+ * より良い席かどうか判定する
+ * @param student 生徒
+ * @param seat 判定したい座席
+ * @param bestSeat 現状のベストな座席
+ * @param classroom 教室の配置
+ * @returns より良いかどうか
+ */
+function judgeBetterSeat(student: Student, seat: Seat, bestSeat: Seat, classroom: Classroom): boolean {
+    if (!student.chooseOptions || (!student.chooseOptions.x && !student.chooseOptions.y) || !seat.col || !seat.row || !bestSeat.col || !bestSeat.row) {
+        return false;
+    }
+
+    if (student.chooseOptions.y) {
+        if ((student.chooseOptions.y === 'front' && (seat.col < bestSeat.col || seat.col < (classroom[0].length - 1) / 2)) ||
+            (student.chooseOptions.y === 'rear' && (seat.col > bestSeat.col || seat.col > (classroom[0].length - 1) / 2))) {
+            if (!student.chooseOptions.x) {
+                return true;
+            }
+        } else if (student.chooseOptions.x) {
+            return false;
+        }
+    }
+
+    if (student.chooseOptions.x) {
+        if ((student.chooseOptions.x === 'left' && (seat.row < bestSeat.row || seat.row < (classroom.length - 1) / 2)) ||
+            (student.chooseOptions.x === 'right' && (seat.row > bestSeat.row || seat.row > (classroom.length - 1) / 2))) {
+            return true;
+        } else if (student.chooseOptions.y) {
+            return false;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -153,41 +194,121 @@ function findBestSeat(student: Student, seats: Seat[], classroom: Classroom, con
         }
 
         if (chooseOptions) {
-            const judgeBetterSeat = (seat: Seat, bestSeat: Seat, classroom: Classroom): boolean => {
-                if (!chooseOptions.x && !chooseOptions.y) {
-                    return false;
-                }
-
-                if (chooseOptions.y) {
-                    if ((chooseOptions.y === 'front' && (seat.col < bestSeat.col || seat.col < (classroom[0].length - 1) / 2)) ||
-                        (chooseOptions.y === 'rear' && (seat.col > bestSeat.col || seat.col > (classroom[0].length - 1) / 2))) {
-                        if (!chooseOptions.x) {
-                            return true;
-                        }
-                    } else if (chooseOptions.x) {
-                        return false;
-                    }
-                }
-
-                if (chooseOptions.x) {
-                    if ((chooseOptions.x === 'left' && (seat.row < bestSeat.row || seat.row < (classroom.length - 1) / 2)) ||
-                        (chooseOptions.x === 'right' && (seat.row > bestSeat.row || seat.row > (classroom.length - 1) / 2))) {
-                        return true;
-                    } else if (chooseOptions.y) {
-                        return false;
-                    }
-                }
-
-                return false;
-            };
-
-            if (judgeBetterSeat(seat, bestSeat, classroom)) {
+            if (judgeBetterSeat(student, seat, bestSeat, classroom)) {
                 bestSeat = seat;
             }
         }
     }
 
     return bestSeat || { row: -1, col: -1 };
+}
+
+/**
+ * 生徒同士を離す・くっつける
+ * @param students 生徒一覧（優先順位付けがされた状態）
+ * @param classroom 教室の配置
+ */
+function doPostSeatAdjustment(students: Student[], classroom: Classroom): Student[] {
+    const studentsNeedAdjustment = students.filter((v) => (v.chooseOptions?.distantStudentIds && v.chooseOptions.distantStudentIds.length > 0) || v.chooseOptions?.pairStudentId);
+    // ↓優先順位高い順に並んでいるので、低い順に引いていくためにひっくり返す
+    const reAssignedStudents = [...students].filter((v) => !studentsNeedAdjustment.includes(v)).reverse();
+
+    studentsNeedAdjustment.forEach((targetStudent) => {
+        if (!targetStudent.seat || !targetStudent.chooseOptions) {
+            throw new Error('Invalid settings');
+        }
+
+        let bestSeat: Seat = targetStudent.seat;
+        let replaceWithId: number | null = null;
+
+        if (targetStudent.chooseOptions.distantStudentIds && !targetStudent.chooseOptions.pairStudentId && targetStudent.chooseOptions.distantStudentIds.every((v) => !isAdjacent(students.find((w) => w.studentId === v)?.seat, targetStudent.seat))) {
+            console.log("近くではないので操作不要");
+            reAssignedStudents.unshift(targetStudent);
+            return;
+        }
+
+        if (targetStudent.chooseOptions.pairStudentId && (!targetStudent.chooseOptions.distantStudentIds || targetStudent.chooseOptions.distantStudentIds.length == 0) && isAdjacent(students.find((w) => w.studentId === targetStudent.chooseOptions?.pairStudentId)?.seat, targetStudent.seat, 'row')) {
+            console.log("すでにとなりどうしなので操作不要");
+            reAssignedStudents.unshift(targetStudent);
+            return;
+        }
+
+        let g = 0;
+        while (replaceWithId == null) {
+            for (let i = 0; i < reAssignedStudents.length; i++) {
+                const studentToBeChecked = reAssignedStudents[i];
+                if (!studentToBeChecked.seat) break;
+    
+                // 避けたい生徒自身の場合スキップ
+                if (targetStudent.chooseOptions.distantStudentIds && targetStudent.chooseOptions.distantStudentIds.includes(studentToBeChecked.studentId)) {
+                    console.log('避ける本人');
+                    continue;
+                }
+    
+                // 避けたい生徒と席が近ければスキップ
+                if (targetStudent.chooseOptions.distantStudentIds && targetStudent.chooseOptions.distantStudentIds.some((v) => isAdjacent(students.find((w) => w.studentId === v)?.seat, studentToBeChecked.seat))) {
+                    console.log('至近距離');
+                    continue;
+                }
+
+                // 誰かを避けている人・ペアがある人はスキップ
+                if ((studentToBeChecked.chooseOptions?.distantStudentIds && studentToBeChecked.chooseOptions.distantStudentIds.length > 0) || (studentToBeChecked.chooseOptions?.pairStudentId && studentToBeChecked.chooseOptions.pairStudentId != targetStudent.chooseOptions.pairStudentId)) {
+                    console.log('他条件を尊重');
+                    continue;
+                }
+
+                // ペアになりたい人がいればその人の横かどうかを判定
+                const isAdjacentBulk = (targetStudent.chooseOptions.pairStudentId == null) ? true : isAdjacent(students.find((w) => w.studentId === targetStudent.chooseOptions?.pairStudentId)?.seat, studentToBeChecked.seat, 'row');
+                // さすがに、ペアをあわせる＋座席位置を考慮すると破綻しかねないので無視
+                const judgeBetterSeatBulk = (targetStudent.chooseOptions.pairStudentId != null) ? true : judgeBetterSeat(targetStudent, studentToBeChecked.seat, bestSeat, classroom);
+        
+                // 希望に添えそうな席なら一旦キープ
+                // 2回目以降のループでは基準を減らしていく（埒が明かないので）
+                if ((isAdjacentBulk || g > 1) && (judgeBetterSeatBulk || g > 0)) {
+                    bestSeat = studentToBeChecked.seat;
+                    replaceWithId = studentToBeChecked.studentId;
+                    console.log('Seat Kept:', JSON.stringify({ bestSeat, replaceWithId }));
+                    break;
+                }
+            }    
+
+            g++;
+        }
+
+        // 座席の交換
+        if (replaceWithId != null) {
+            const replaceStudentIndex = reAssignedStudents.findIndex((w) => w.studentId === replaceWithId);
+            const replaceStudentSeat = { ...reAssignedStudents[replaceStudentIndex].seat } as Seat;
+            reAssignedStudents[replaceStudentIndex].seat = { ...targetStudent.seat };
+            targetStudent.seat = replaceStudentSeat;
+            console.log({ targetStudent, studentToBeReplaced: reAssignedStudents[replaceStudentIndex] });
+            reAssignedStudents.unshift(targetStudent);
+        }
+    });
+
+    return reAssignedStudents;
+}
+
+/**
+ * 席は近いかどうか
+ * @param seat1 比較対象の席
+ * @param seat2 比較対象の席
+ * @param validateMode 何処で比較するか（`row`, `col`, `both` デフォルトは `both`）
+ * @returns 
+ */
+function isAdjacent(seat1: Seat | null = null, seat2: Seat | null = null, validateMode: 'row' | 'col' | 'both' = 'both'): boolean {
+    if (!seat1?.col || !seat1?.row || !seat2?.col || !seat2?.row) return false;
+
+    const rowDiff = Math.abs(seat1.row - seat2.row);
+    const colDiff = Math.abs(seat1.col - seat2.col);
+
+    if (validateMode === 'col') {
+        return rowDiff == 0 && colDiff <= 1;
+    }
+    if (validateMode === 'row') {
+        return colDiff == 0 && rowDiff <= 1;
+    }
+    return rowDiff <= 1 && colDiff <= 1;
 }
 
 /**
