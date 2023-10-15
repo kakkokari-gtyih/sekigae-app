@@ -5,6 +5,8 @@
         "description": "Make perfect seating arrangements effortlessly, respecting your members' seat preferences (fixed, front/back, left/right), with Sekigae.app!",
         "unsavedChanges": "If you navigate away from this page, all data, including student information and seating arrangement results, will be lost.\nBe sure to export and save any unsaved data. Do you want to proceed?",
         "noScript": "Please turn on Javascript from your browser's settings.",
+        "pleaseChoose": "選択してください",
+        "Xselected": "{0} 個選択済",
         "nav": {
             "terms": "Terms of Service",
             "helpTranslate": "Help Translate",
@@ -12,7 +14,7 @@
         }
     },
     "seo": {
-        "defaultDescription": "With our unique algorithm, this app makes it easy for everyone's seating preferences to be accommodated. It also includes CSV import and export functions, making post-rearrangement administrative tasks a breeze!"
+        "defaultDescription": "【「窓際希望」をかなえる席替え】独自アルゴリズムで、全員の座席の希望が通りやすい席替えアプリ。CSVのインポート・エクスポート機能付きで、席替え後の事務作業もラクラク！"
     },
     "tabs": {
         "classroom": "① Seat Arrangement",
@@ -48,6 +50,12 @@
                 "yNone": "No Front/Back Preference",
                 "disclaimerTitle": "[Disclaimer]",
                 "disclaimer": "Seat assignments are made based on the above settings. While efforts are made to accommodate preferences, it's possible that seats might not match the specified conditions. Assignments are only made if matching seats are available. If matching seats are unavailable due to shortage or other reasons, assignments may deviate from preferences."
+            },
+            "distantOrPairStudent": {
+                "title": "ペアを離す・くっつける",
+                "distantStudent": "離したい生徒",
+                "pairStudent": "ペアにしたい生徒",
+                "distantStudentDescription": "離したい生徒は複数人選べます。"
             },
             "duplicateStudentId": "Duplicate Attendance Number"
         },
@@ -134,8 +142,10 @@
     },
     "csvSyntax": {
         "headerIdentifier": "Attendance Number",
-        "templateHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference (Enter L or R. L = Left, R = Right)\",\"Front/Back Preference (Enter F or R. F = Front, R = Rear)\",\"Assigned Seat (Format: [r_c] for row and column)\"",
-        "resultHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference\",\"Front/Back Preference\",\"If reusing assigned seats, delete this column\",\"Assigned Seat (R_C)\",Row,Column,\"Sequential Seat Number (Top left to bottom right)\""
+        "v1TemplateHeaderRow": "出席番号,名前,ふりがな,\"左右の希望（L または R で記入。L＝左, R＝右）\",\"前後の希望（F または R で記入。F＝前, R＝後ろ）\",座席指定（左からr番目・前からc番目のとき→[r_c]のようにアンダーバーで区切る）",
+        "v1ResultHeaderRow": "出席番号,名前,ふりがな,左右の希望,前後の希望,座席指定を流用する場合はこの列を削除,座席指定(R_C),行,列,座席通し番号(左前から)",
+        "v2TemplateHeaderRow": "出席番号,名前,ふりがな,\"左右の希望（L または R で記入。L＝左, R＝右）\",\"前後の希望（F または R で記入。F＝前, R＝後ろ）\",離したい生徒の出席番号（アンダーバー区切り）,ペアにしたい生徒の出席番号（1名）,座席指定（左からr番目・前からc番目のとき→[r_c]のようにアンダーバーで区切る）,v2",
+        "v2ResultHeaderRow": "出席番号,名前,ふりがな,左右の希望,前後の希望,離したい生徒の出席番号,ペアにしたい生徒の出席番号,座席指定を流用する場合はこの列を削除,座席指定(R_C),行,列,座席通し番号(左前から),v2"
     },
     "seatSelector": {
         "front": "Front",
