@@ -281,8 +281,8 @@ function doPostSeatAdjustment(students: Student[], classroom: Classroom): Studen
                 }
 
                 // 誰かを避けている人・ペアがある人はスキップ
-                if ((studentToBeChecked.chooseOptions?.distantStudentIds && studentToBeChecked.chooseOptions.distantStudentIds.length > 0) || (studentToBeChecked.chooseOptions?.pairStudentId && studentToBeChecked.chooseOptions.pairStudentId != targetStudent.chooseOptions.pairStudentId)) {
-                    console.log('他条件を尊重');
+                if ((studentToBeChecked.chooseOptions?.distantStudentIds && studentToBeChecked.chooseOptions.distantStudentIds.length > 0) || studentToBeChecked.chooseOptions?.pairStudentId || studentToBeChecked.studentId === targetStudent.chooseOptions.pairStudentId) {
+                    console.log('他条件を尊重 or ペア同士');
                     continue;
                 }
 
