@@ -21,7 +21,7 @@ export type Student = {
         x?: null | 'left' | 'right';
         y?: null | 'front' | 'rear';
         distantStudentIds?: number[];
-        pairStudentId: number | null;
+        pairStudentId?: number | null;
     };
 };
 
