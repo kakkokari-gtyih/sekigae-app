@@ -29,6 +29,7 @@
         "seatsAndStudents": "座席数 {seatCount} 席に対して、現在の人数 {studentCount} 人",
         "description": "右側の「メンバーの追加」から席替えするメンバーを登録するか、メンバー一覧のCSVデータをインポートしてください。",
         "privacy": "このプログラムはブラウザ上で動作が完結しているため、入力したデータがインターネット上に出ることはありません。",
+        "peopleCount": "人",
         "studentEdit": {
             "title": "メンバーの追加",
             "modalTitle": "メンバーの追加 / 編集",
@@ -62,6 +63,11 @@
         "studentEasyInput": {
             "title": "かんたん一括挿入",
             "label": "メンバーの名前（一人ずつ改行で入力）",
+            "help": "すでにメンバーが居る場合は、その出席番号に続けて末尾に挿入されます。"
+        },
+        "studentQuickInput": {
+            "title": "人数を指定して挿入",
+            "label": "メンバーの人数",
             "help": "すでにメンバーが居る場合は、その出席番号に続けて末尾に挿入されます。"
         },
         "importFromCSV": {

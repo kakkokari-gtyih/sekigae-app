@@ -89,10 +89,15 @@
                                     @click="openStudentEdit()" />
                                 <UDropdown :items="[
                                     [
-                                        {
+                                    {
                                             label: $t('students.studentEasyInput.title'),
                                             icon: 'i-heroicons-clipboard-document-list',
                                             click: openStudentEasyInput,
+                                        },
+                                        {
+                                            label: $t('students.studentQuickInput.title'),
+                                            icon: 'i-heroicons-clipboard-document-list',
+                                            click: openStudentQuickInput,
                                         },
                                         {
                                             label: $t('students.importFromCSV.title'),
@@ -125,7 +130,7 @@
                                 { key: 'condition', label: $t('students.table.cols.condition') },
                                 { key: 'actions' },
                             ]"
-                            :rows="students"
+                            :rows="studentsForTable"
                             :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: $t('common.loading') }"
                             :loading="isUploadingCSV"
                             :ui="{
@@ -337,6 +342,32 @@
                     </template>
                 </UCard>
 
+                <UCard v-if="modalState === 'quickInput'"
+                    :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                    <template #header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                                {{ $t('students.studentQuickInput.title') }}
+                            </h3>
+                            <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
+                                @click="modalState = null" />
+                        </div>
+                    </template>
+                    <UFormGroup name="students" :label="$t('students.studentQuickInput.label')" :ui="{ help: 'mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400' }" :help="$t('students.studentQuickInput.help')">
+                        <UInput type="number" min="1" :autofocus="true" v-model="studentQuickInput">
+                            <template #trailing>
+                                <span class="text-gray-500 dark:text-gray-400 text-xs">{{ $t('students.peopleCount') }}</span>
+                            </template>
+                        </UInput>
+                    </UFormGroup>
+                    <template #footer>
+                        <div class="text-end">
+                            <UButton color="white" :label="$t('students.cancel')" class="mr-2" @click="modalState = null" />
+                            <UButton :label="$t('students.save')" :loading="studentQuickInputLoadState" @click="execStudentQuickInput()" />
+                        </div>
+                    </template>
+                </UCard>
+
             </UModal>
         </UContainer>
         <UNotifications />
@@ -402,7 +433,7 @@ const settingsTab = [
 ];
 const settingsTabIndex = ref<number>();
 
-const modalState = ref<null | 'studentEdit' | 'easyInput'>(null);
+const modalState = ref<null | 'studentEdit' | 'easyInput' | 'quickInput'>(null);
 const modalIsOpen = ref<boolean>(false);
 watch(modalState, (to) => {
     modalIsOpen.value = (to !== null);
@@ -412,6 +443,12 @@ watch(modalState, (to) => {
 });
 
 const students = ref<Student[]>([]);
+const studentsForTable = computed(() => students.value.map((v) => {
+    if (!v.name) {
+        v.name = '';
+    }
+    return v;
+}));
 const classroom = ref<Classroom>([
     [true, true, true, true, true],
     [true, true, true, true, true],
@@ -465,6 +502,39 @@ function execStudentEasyInput() {
     modalState.value = null;
 }
 // StudentEasyInput END
+
+// StudentQuickInput START
+const studentQuickInput = ref('1');
+const studentQuickInputLoadState = ref(false);
+function openStudentQuickInput() {
+    modalState.value = 'quickInput';
+    studentQuickInput.value = '1';
+}
+
+function execStudentQuickInput() {
+    studentQuickInputLoadState.value = true;
+    _execStudentQuickInput().then(() => {
+        studentQuickInputLoadState.value = false;
+        modalState.value = null;
+    })
+}
+
+async function _execStudentQuickInput() {
+    const qty = parseInt(studentQuickInput.value);
+    if (isNaN(qty)) {
+        alert('Invalid value. 半角数字で入力してください。');
+        return;
+    } 
+    if (Array.isArray(students.value)) {
+        let lastStudentId = 0;
+        if (students.value.length > 0) {
+            lastStudentId = students.value.reduce((p, c) => (p > c.studentId) ? p : c.studentId, 0);
+        }
+        const addedStudent: Student[] = new Array(qty).fill(null).map((v, i) => ({ studentId: (lastStudentId + 1 + i) }));
+        students.value?.push(...addedStudent);
+    }
+}
+// StudentQuickInput END
 
 // CSVUpload START
 const isUploadingCSV = ref<boolean>(false);
