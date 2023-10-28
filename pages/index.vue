@@ -727,14 +727,12 @@ function saveStudentEdit() {
         return;
     }
 
-    if (currentEditDistancedStudentIds.value.length > 0) {
-        if (!currentEditObject.value.chooseOptions) {
-            currentEditObject.value.chooseOptions = {
-                distantStudentIds: currentEditDistancedStudentIds.value,
-            };
-        } else {
-            currentEditObject.value.chooseOptions.distantStudentIds = currentEditDistancedStudentIds.value;
-        }
+    if (!currentEditObject.value.chooseOptions) {
+        currentEditObject.value.chooseOptions = {
+            distantStudentIds: currentEditDistancedStudentIds.value,
+        };
+    } else {
+        currentEditObject.value.chooseOptions.distantStudentIds = currentEditDistancedStudentIds.value;
     }
 
     if (!currentEditId.value && students.value?.some((v) => v.studentId === currentEditObject.value?.studentId)) {

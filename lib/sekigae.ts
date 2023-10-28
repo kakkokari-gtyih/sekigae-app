@@ -21,6 +21,7 @@ export type Student = {
         x?: null | 'left' | 'right';
         y?: null | 'front' | 'rear';
         distantStudentIds?: number[];
+        fixed?: boolean;
         pairStudentId?: number | null;
     };
 };
@@ -65,6 +66,23 @@ function getAvailableSeats(classroom: Classroom, ignore: Seat[] = []): Seat[] {
     return seats;
 }
 
+
+/**
+ * 2のn乗の配列をバラバラの順番で返す
+ */
+function get2PowRandom(min: number = 0, max: number = 3, count: number = 4): number[] {
+    const result: number[] = [];
+    while (result.length < count) {
+        const randomPower = Math.floor(Math.random() * (max - min + 1)) + min;
+        const powerOfTwo = Math.pow(2, randomPower);
+        if (!result.includes(powerOfTwo)) {
+            result.push(powerOfTwo);
+        }
+    }
+    return result;
+}
+
+
 /**
  * 生徒を座席に割り当てる
  * 
@@ -83,20 +101,21 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
 
         const aOptions = a.chooseOptions;
         const bOptions = b.chooseOptions;
+        const randomWeights = get2PowRandom(0, 3, 4);
 
         const aPriority =
             (a.seat ? 16 : 0) +
-            (aOptions?.y === 'front' ? 8 : 0) +
-            (aOptions?.y === 'rear' ? 4 : 0) +
-            (aOptions?.x === 'left' ? 2 : 0) +
-            (aOptions?.x === 'right' ? 1 : 0);
+            (aOptions?.y === 'front' ? randomWeights[0] : 0) +
+            (aOptions?.y === 'rear' ? randomWeights[1] : 0) +
+            (aOptions?.x === 'left' ? randomWeights[2] : 0) +
+            (aOptions?.x === 'right' ? randomWeights[3] : 0);
 
         const bPriority =
             (b.seat ? 16 : 0) +
-            (bOptions?.y === 'front' ? 8 : 0) +
-            (bOptions?.y === 'rear' ? 4 : 0) +
-            (bOptions?.x === 'left' ? 2 : 0) +
-            (bOptions?.x === 'right' ? 1 : 0);
+            (bOptions?.y === 'front' ? randomWeights[0] : 0) +
+            (bOptions?.y === 'rear' ? randomWeights[1] : 0) +
+            (bOptions?.x === 'left' ? randomWeights[2] : 0) +
+            (bOptions?.x === 'right' ? randomWeights[3] : 0);
 
         return bPriority - aPriority;
     });
@@ -104,7 +123,17 @@ export function assignSeats(students: Student[], classroom: Classroom, considerO
     let assignedStudents: Student[] = [];
 
     for (const student of sortedStudents) {
+
+        // 固定配置
         if (student.seat && student.seat.col && student.seat.row && considerOptions) {
+            if (student.chooseOptions) {
+                student.chooseOptions.fixed = true;
+            } else {
+                student.chooseOptions = {
+                    fixed: true,
+                    pairStudentId: null,
+                };
+            }
             assignedStudents.push(student);
             seats.splice(findSeatIndex(student.seat.row, student.seat.col, seats), 1);
             continue;
@@ -252,8 +281,14 @@ function doPostSeatAdjustment(students: Student[], classroom: Classroom): Studen
                 }
 
                 // 誰かを避けている人・ペアがある人はスキップ
-                if ((studentToBeChecked.chooseOptions?.distantStudentIds && studentToBeChecked.chooseOptions.distantStudentIds.length > 0) || (studentToBeChecked.chooseOptions?.pairStudentId && studentToBeChecked.chooseOptions.pairStudentId != targetStudent.chooseOptions.pairStudentId)) {
-                    console.log('他条件を尊重');
+                if ((studentToBeChecked.chooseOptions?.distantStudentIds && studentToBeChecked.chooseOptions.distantStudentIds.length > 0) || studentToBeChecked.chooseOptions?.pairStudentId || studentToBeChecked.studentId === targetStudent.chooseOptions.pairStudentId) {
+                    console.log('他条件を尊重 or ペア同士');
+                    continue;
+                }
+
+                // 固定配置はスキップ
+                if (studentToBeChecked.chooseOptions?.fixed) {
+                    console.log('固定配置');
                     continue;
                 }
 
