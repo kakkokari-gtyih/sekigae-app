@@ -29,6 +29,7 @@
         "seatsAndStudents": "{studentCount} Students out of {seatCount} Seats",
         "description": "Register members for seat rearrangement using 'Add Member' on the right, or import member data from a CSV list.",
         "privacy": "This program runs entirely in your browser, ensuring that your input data stays within your device and does not go online.",
+        "peopleCount": "人",
         "studentEdit": {
             "title": "Add Member",
             "modalTitle": "Add / Edit Member",
@@ -63,6 +64,11 @@
             "title": "Easy Bulk Insert",
             "label": "Member Names (One per line)",
             "help": "New members will be appended after existing ones, if any."
+        },
+        "studentQuickInput": {
+            "title": "人数を指定して挿入",
+            "label": "メンバーの人数",
+            "help": "すでにメンバーが居る場合は、その出席番号に続けて末尾に挿入されます。"
         },
         "importFromCSV": {
             "title": "CSV Import",
