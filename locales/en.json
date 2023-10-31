@@ -5,6 +5,8 @@
         "description": "Make perfect seating arrangements effortlessly, respecting your members' seat preferences (fixed, front/back, left/right), with Sekigae.app!",
         "unsavedChanges": "If you navigate away from this page, all data, including student information and seating arrangement results, will be lost.\nBe sure to export and save any unsaved data. Do you want to proceed?",
         "noScript": "Please turn on Javascript from your browser's settings.",
+        "pleaseChoose": "Choose an Option",
+        "Xselected": "{0} selected",
         "nav": {
             "terms": "Terms of Service",
             "helpTranslate": "Help Translate",
@@ -27,6 +29,7 @@
         "seatsAndStudents": "{studentCount} Students out of {seatCount} Seats",
         "description": "Register members for seat rearrangement using 'Add Member' on the right, or import member data from a CSV list.",
         "privacy": "This program runs entirely in your browser, ensuring that your input data stays within your device and does not go online.",
+        "peopleCount": "",
         "studentEdit": {
             "title": "Add Member",
             "modalTitle": "Add / Edit Member",
@@ -49,11 +52,22 @@
                 "disclaimerTitle": "[Disclaimer]",
                 "disclaimer": "Seat assignments are made based on the above settings. While efforts are made to accommodate preferences, it's possible that seats might not match the specified conditions. Assignments are only made if matching seats are available. If matching seats are unavailable due to shortage or other reasons, assignments may deviate from preferences."
             },
+            "distantOrPairStudent": {
+                "title": "Separate/attach Pairs",
+                "distantStudent": "Students to stay away from this student",
+                "pairStudent": "Students to pair with this student",
+                "distantStudentDescription": "You can choose more than one student."
+            },
             "duplicateStudentId": "Duplicate Attendance Number"
         },
         "studentEasyInput": {
             "title": "Easy Bulk Insert",
             "label": "Member Names (One per line)",
+            "help": "New members will be appended after existing ones, if any."
+        },
+        "studentQuickInput": {
+            "title": "Bulk insert for number of people",
+            "label": "The number of member",
             "help": "New members will be appended after existing ones, if any."
         },
         "importFromCSV": {
@@ -134,8 +148,10 @@
     },
     "csvSyntax": {
         "headerIdentifier": "Attendance Number",
-        "templateHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference (Enter L or R. L = Left, R = Right)\",\"Front/Back Preference (Enter F or R. F = Front, R = Rear)\",\"Assigned Seat (Format: [r_c] for row and column)\"",
-        "resultHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference\",\"Front/Back Preference\",\"If reusing assigned seats, delete this column\",\"Assigned Seat (R_C)\",Row,Column,\"Sequential Seat Number (Top left to bottom right)\""
+        "v1TemplateHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference (Enter L or R. L = Left, R = Right)\",\"Front/Back Preference (Enter F or R. F = Front, R = Rear)\",\"Assigned Seat (Format: [r_c] for row and column)\"",
+        "v1ResultHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference\",\"Front/Back Preference\",\"If reusing assigned seats, delete this column\",\"Assigned Seat (R_C)\",Row,Column,\"Sequential Seat Number (Top left to bottom right)\"",
+        "v2TemplateHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference (Enter L or R. L = Left, R = Right)\",\"Front/Back Preference (Enter F or R. F = Front, R = Rear)\",\"Attendance number of the student you want to keep away (separated by underscores)\",\"Attendance number of the student you want to pair (1 student)\",\"Assigned Seat (Format: [r_c] for row and column)\",v2",
+        "v2ResultHeaderRow": "\"Attendance Number\",Name,Furigana,\"Left/Right Preference\",\"Front/Back Preference\",\"Attendance number of the student you want to keep away\",\"Attendance number of the student you want to pair\",\"If reusing assigned seats, delete this column\",\"Assigned Seat (R_C)\",Row,Column,\"Sequential Seat Number (Top left to bottom right)\",v2"
     },
     "seatSelector": {
         "front": "Front",
