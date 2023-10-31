@@ -20,7 +20,7 @@ export default defineNuxtConfig({
         "@/assets/css/scrollbar.css",
     ],
     modules: [
-        '@nuxthq/ui',
+        '@nuxt/ui',
         '@nuxtjs/i18n'
     ],
     ui: {
