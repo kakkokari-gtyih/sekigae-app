@@ -12,6 +12,7 @@ export const locales: LocaleObject[] = [
 
 export default defineNuxtConfig({
     runtimeConfig: {
+        locales,
         public: {
             baseUrl,
         },
@@ -56,6 +57,9 @@ export default defineNuxtConfig({
 			// 【一時対応】とりあえずビルドできるようにする
 			failOnError: false,
 		},
+        plugins: [
+            '@/server/plugins/i18nRedirector.ts',
+        ]
     },
     experimental: {
 		inlineSSRStyles: false,

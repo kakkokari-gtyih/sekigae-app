@@ -627,7 +627,7 @@ function importFromCSV() {
                                 chooseOptions: {
                                     x: ci('chooseOptions.x') < 0 ? undefined : parsedStudent[ci('chooseOptions.x')],
                                     y: ci('chooseOptions.y') < 0 ? undefined : parsedStudent[ci('chooseOptions.y')],
-                                    distantStudentIds: ci('chooseOptions.distantStudentIds') < 0 ? undefined : parsedStudent[ci('chooseOptions.distantStudentIds')].split(',').filter((v) => v !== '').map((e) => parseInt(e)),
+                                    distantStudentIds: ci('chooseOptions.distantStudentIds') < 0 ? undefined : parsedStudent[ci('chooseOptions.distantStudentIds')].split('_').filter((v) => v !== '').map((e) => parseInt(e)),
                                     pairStudentId: ci('chooseOptions.pairStudentId') < 0 ? undefined : parseInt(parsedStudent[ci('chooseOptions.pairStudentId')]),
                                 },
                                 seat,
