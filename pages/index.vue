@@ -541,7 +541,7 @@ const isUploadingCSV = ref<boolean>(false);
 
 function downloadCSV() {
     if (process.client) {
-        downloadCSVFile(t('csvSyntax.templateHeaderRow'), "csvTemplate.csv");
+        downloadCSVFile(t('csvSyntax.v2TemplateHeaderRow'), "csvTemplate.csv");
     }
 }
 function importFromCSV() {
