@@ -497,7 +497,7 @@ function openStudentEasyInput() {
 
 function execStudentEasyInput() {
     if (Array.isArray(students.value)) {
-        students.value?.push(...(studentEasyInput.value?.split(/\n/g).map<Student>((e, i) => ({ studentId: (i + (students.value?.length ?? 0) + 1), name: e })) || []));
+        students.value?.push(...(studentEasyInput.value?.split(/\n/g).filter((v) => v != '').map<Student>((e, i) => ({ studentId: (i + (students.value?.length ?? 0) + 1), name: e })) || []));
     }
     modalState.value = null;
 }
@@ -781,6 +781,7 @@ function openStudentEdit(id?: number) {
         enableCondition.value = Object.values(currentEditObject.value?.chooseOptions ?? {}).some((e) => ['left', 'right', 'front', 'rear'].includes(e ?? '')) || (currentEditObject.value?.chooseOptions?.distantStudentIds && currentEditObject.value?.chooseOptions?.distantStudentIds.length > 0) || (currentEditObject.value?.chooseOptions?.pairStudentId != null);
     } else {
         currentEditObject.value = { studentId: students.value.length + 1 };
+        currentEditIndex = -1;
     }
     modalState.value = 'studentEdit';
 }
@@ -809,6 +810,9 @@ function saveStudentEdit() {
         alert(t('students.studentEdit.duplicateStudentId'));
         return;
     }
+
+    //@ts-ignore
+    currentEditObject.value.studentId = parseInt(currentEditObject.value.studentId);
 
     if (!students.value) {
         students.value = [currentEditObject.value];
