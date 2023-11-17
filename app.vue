@@ -20,11 +20,11 @@ const getLdJson = (additionalGraphes: Thing[] = []): string => {
             {
                 "@type": "Organization",
                 "@id": `${baseUrl}/#Organization`,
-                "name": "Sekigae.app",
+                "name": "大阪府立富田林中学校・高等学校",
                 "url": `${baseUrl}/`,
                 "sameAs": [
                     "https://tonko.ed.jp/",
-					"https://tonko-forum.pages.dev/",
+					"https://forum.tonko.ed.jp/",
                 ],
                 "logo": {
                     "@type": "ImageObject",
@@ -85,6 +85,9 @@ useHead((): Record<string, any> => ({
         ...(head.value.meta?.map((e) => ({ property: e.property, content: e.content, })) || []),
     ],
     link: [
+        { rel: 'apple-touch-icon', sizes: '180x180', href: `${baseUrl}/img/apple-touch-icon.png` },
+        { rel: 'mask-icon', href: `${baseUrl}/img/safari-pinned-tab.svg`, color: '#22c55e' },
+
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap' },
