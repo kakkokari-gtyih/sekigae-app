@@ -12,7 +12,7 @@ const getDescription = (): string => {
         return t('seo.defaultDescription');
     }
 }
-const getTitle = () => route.meta.title ? `${route.meta.title} | Sekigae.app` : "Sekigae.app";
+const getTitle = () => route.meta.title ? `${route.meta.title} | Sekigae.app` : t('seo.defaultTitle');
 const getLdJson = (additionalGraphes: Thing[] = []): string => {
     const ldJson: Graph = {
         "@context": "https://schema.org",
