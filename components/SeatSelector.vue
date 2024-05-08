@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Classroom, Seat } from '../lib/sekigae';
+import type { Classroom, Seat } from '@/lib/sekigae';
 
 const props = defineProps<{
     classroom: Classroom;
