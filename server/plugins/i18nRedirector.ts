@@ -1,4 +1,5 @@
 import { useRuntimeConfig } from '#imports';
+import type { LocaleObject } from '@nuxtjs/i18n';
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('render:html', (html, { event }) => {
@@ -7,8 +8,9 @@ export default defineNitroPlugin((nitroApp) => {
     }
 
     const runtimeConfig = useRuntimeConfig();
+    const locales = runtimeConfig.locales as LocaleObject[];
     //@ts-ignore
-    if (!event.path.match(new RegExp(`^/(${runtimeConfig.locales.map((l) => l.code).join('|')})/`))) {
+    if (!event.path.match(new RegExp(`^/(${locales.map((l) => l.code).join('|')})`))) {
       html.htmlAttrs = [];
 
       const remainingList: string[] = [];
@@ -22,7 +24,7 @@ export default defineNitroPlugin((nitroApp) => {
 
       html.head = remainingList.map((v) => v + '\n');
       //@ts-ignore
-      html.head.push('<script type="text/javascript">const s = ' + JSON.stringify(runtimeConfig.locales.map((l) => l.code)) + '; const d = new URLSearchParams(document.cookie); if (d.get(\'i18n_redirected\')) { location.replace(\'/\' + d.get(\'i18n_redirected\') + location.pathname); } else if (s.includes(navigator.language.split("-")[0])) { location.replace(\'/\' + navigator.language.split("-")[0] + location.pathname); } else { location.replace(\'/ja\' + location.pathname); }</script>\n');
+      html.head.push('<script type="text/javascript">const s = ' + JSON.stringify(locales.map((l) => l.code)) + '; const d = Object.fromEntries(document.cookie.split(\'; \').map(v=>v.split(/=(.*)/s).map(decodeURIComponent))); if (d.i18n_redirected) { location.replace(\'/\' + d.i18n_redirected + location.pathname + location.search); } else if (s.includes(navigator.language.split("-")[0])) { location.replace(\'/\' + navigator.language.split("-")[0] + location.pathname + location.search); } else { location.replace(\'/ja\' + location.pathname + location.search); }</script>\n');
       html.body = ['\n<noscript>Please enable Javascript to see this page properly.</noscript>\n'];
       html.bodyAppend = [];
       html.bodyPrepend = [];
