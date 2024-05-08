@@ -62,8 +62,10 @@ export default defineNuxtConfig({
         ]
     },
     experimental: {
-		inlineSSRStyles: false,
         componentIslands: true,
 		payloadExtraction: true,
 	},
+    features: {
+        inlineStyles: false,
+    },
 })
