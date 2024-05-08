@@ -250,54 +250,54 @@ function doPostSeatAdjustment(students: Student[], classroom: Classroom): Studen
         let bestSeat: Seat = targetStudent.seat;
         let replaceWithId: number | null = null;
 
-        console.log('↓変更作業開始↓', targetStudent);
+        if (import.meta.dev) console.log('↓変更作業開始↓', targetStudent);
 
         if (targetStudent.chooseOptions.distantStudentIds && !targetStudent.chooseOptions.pairStudentId && targetStudent.chooseOptions.distantStudentIds.every((v) => !isAdjacent(students.find((w) => w.studentId === v)?.seat, targetStudent.seat))) {
-            console.log("近くではないので操作不要");
+            if (import.meta.dev) console.log("近くではないので操作不要");
             reAssignedStudents.unshift(targetStudent);
             return;
         }
 
         if (targetStudent.chooseOptions.pairStudentId && (!targetStudent.chooseOptions.distantStudentIds || targetStudent.chooseOptions.distantStudentIds.length == 0) && isAdjacent(students.find((w) => w.studentId === targetStudent.chooseOptions?.pairStudentId)?.seat, targetStudent.seat, 'row')) {
-            console.log("すでにとなりどうしなので操作不要");
+            if (import.meta.dev) console.log("すでにとなりどうしなので操作不要");
             reAssignedStudents.unshift(targetStudent);
             return;
         }
 
         let g = 0;
         while (replaceWithId == null) {
-            console.log('↓座席探索開始 %d 回目↓', g);
+            if (import.meta.dev) console.log('↓座席探索開始 %d 回目↓', g);
             for (let i = 0; i < reAssignedStudents.length; i++) {
                 const studentToBeChecked = reAssignedStudents[i];
-                console.log('↓座席探索候補↓', studentToBeChecked);
+                if (import.meta.dev) console.log('↓座席探索候補↓', studentToBeChecked);
 
                 // seatがない場合スキップ
                 if (!studentToBeChecked.seat) {
-                    console.log('探索候補の座席設定不正');
+                    if (import.meta.dev) console.log('探索候補の座席設定不正');
                     continue;
                 }
     
                 // 避けたい生徒自身の場合スキップ
                 if (targetStudent.chooseOptions.distantStudentIds && targetStudent.chooseOptions.distantStudentIds.includes(studentToBeChecked.studentId)) {
-                    console.log('避ける本人');
+                    if (import.meta.dev) console.log('避ける本人');
                     continue;
                 }
     
                 // 避けたい生徒と席が近ければスキップ
                 if (targetStudent.chooseOptions.distantStudentIds && targetStudent.chooseOptions.distantStudentIds.some((v) => isAdjacent(students.find((w) => w.studentId === v)?.seat, studentToBeChecked.seat))) {
-                    console.log('至近距離');
+                    if (import.meta.dev) console.log('至近距離');
                     continue;
                 }
 
                 // 誰かを避けている人・ペアがある人はスキップ
                 if ((studentToBeChecked.chooseOptions?.distantStudentIds && studentToBeChecked.chooseOptions.distantStudentIds.length > 0) || studentToBeChecked.chooseOptions?.pairStudentId || studentToBeChecked.studentId === targetStudent.chooseOptions.pairStudentId) {
-                    console.log('他条件を尊重 or ペア同士');
+                    if (import.meta.dev) console.log('他条件を尊重 or ペア同士');
                     continue;
                 }
 
                 // 固定配置はスキップ
                 if (studentToBeChecked.chooseOptions?.fixed) {
-                    console.log('固定配置');
+                    if (import.meta.dev) console.log('固定配置');
                     continue;
                 }
 
@@ -306,14 +306,14 @@ function doPostSeatAdjustment(students: Student[], classroom: Classroom): Studen
                 // さすがに、ペアをあわせる＋座席位置を考慮すると破綻しかねないので無視
                 const judgeBetterSeatBulk = (targetStudent.chooseOptions.pairStudentId != null) ? true : judgeBetterSeat(targetStudent, studentToBeChecked.seat, bestSeat, classroom);
         
-                console.log('希望確認', {isAdjacentBulk, judgeBetterSeatBulk});
+                if (import.meta.dev) console.log('希望確認', {isAdjacentBulk, judgeBetterSeatBulk});
 
                 // 希望に添えそうな席なら一旦キープ
                 // 2回目以降のループでは基準を減らしていく（埒が明かないので）
                 if (isAdjacentBulk && (judgeBetterSeatBulk || g > 0)) {
                     bestSeat = studentToBeChecked.seat;
                     replaceWithId = studentToBeChecked.studentId;
-                    console.log('暫定で座席確保', JSON.stringify({ bestSeat, replaceWithId }));
+                    if (import.meta.dev) console.log('暫定で座席確保', JSON.stringify({ bestSeat, replaceWithId }));
 
                     if (isAdjacentBulk && g > 0) {
                         break;
@@ -321,9 +321,9 @@ function doPostSeatAdjustment(students: Student[], classroom: Classroom): Studen
                 }
             }
             if (!replaceWithId) {
-                console.log('↑座席決定せず %d 回目終了↑', g);
+                if (import.meta.dev) console.log('↑座席決定せず %d 回目終了↑', g);
             } else {
-                console.log('↑座席決定 %d 回目で終了↑', g);
+                if (import.meta.dev) console.log('↑座席決定 %d 回目で終了↑', g);
             }
             g++;
         }
@@ -334,13 +334,13 @@ function doPostSeatAdjustment(students: Student[], classroom: Classroom): Studen
             const replaceStudentSeat = { ...reAssignedStudents[replaceStudentIndex].seat } as Seat;
             reAssignedStudents[replaceStudentIndex].seat = { ...targetStudent.seat };
             targetStudent.seat = replaceStudentSeat;
-            console.log({ targetStudent, studentToBeReplaced: reAssignedStudents[replaceStudentIndex] });
+            if (import.meta.dev) console.log({ targetStudent, studentToBeReplaced: reAssignedStudents[replaceStudentIndex] });
         }
 
         // 最悪決まらなかったとしても座席表は埋める
         reAssignedStudents.unshift(targetStudent);
 
-        console.log('↑変更作業終了↑');
+        if (import.meta.dev) console.log('↑変更作業終了↑');
     });
 
     return reAssignedStudents;

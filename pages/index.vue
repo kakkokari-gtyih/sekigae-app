@@ -540,12 +540,12 @@ async function _execStudentQuickInput() {
 const isUploadingCSV = ref<boolean>(false);
 
 function downloadCSV() {
-    if (process.client) {
+    if (import.meta.client) {
         downloadCSVFile(t('csvSyntax.v2TemplateHeaderRow'), "csvTemplate.csv");
     }
 }
 function importFromCSV() {
-    if (process.client) {
+    if (import.meta.client) {
         const file = document.createElement('input');
         file.type = 'file';
         file.accept = 'text/csv';
@@ -665,7 +665,7 @@ function exportToCSV() {
         });
         return;
     }
-    if (process.client) {
+    if (import.meta.client) {
         const stringified = students.value.map((e) => {
             let x = '', y = '';
             switch (e.chooseOptions?.x) {
@@ -976,7 +976,7 @@ function resetFullScreenState() {
 }
 
 function toggleFullScreen() {
-    if (process.client) {
+    if (import.meta.client) {
         if (document.fullscreenElement) {
             document.exitFullscreen().then(() => {
                 screen.orientation.unlock();
@@ -1004,7 +1004,7 @@ const screenWidth = ref<number>(1280);
 function adjustWidth() {
     screenWidth.value = document.documentElement.clientWidth;
 }
-if (process.client) {
+if (import.meta.client) {
     onMounted(() => {
         adjustWidth();
     });
@@ -1018,7 +1018,7 @@ function nativeBeforeUnload(ev: Event) {
 }
 
 onBeforeRouteLeave((to, from, next) => {
-    if (!process.client) {
+    if (!import.meta.client) {
         next();
         return;
     }
@@ -1034,7 +1034,7 @@ onBeforeRouteLeave((to, from, next) => {
 
 const changeWatcher = watch([students, classroom, result], () => {
     hasChanged.value = true;
-    if (process.client) {
+    if (import.meta.client) {
         window.addEventListener('beforeunload', nativeBeforeUnload);
     }
     // ウォッチャー停止

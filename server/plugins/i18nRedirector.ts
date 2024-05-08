@@ -6,7 +6,6 @@ export default defineNitroPlugin((nitroApp) => {
       return;
     }
 
-    console.log(event.path);
     const runtimeConfig = useRuntimeConfig();
     //@ts-ignore
     if (!event.path.match(new RegExp(`^/(${runtimeConfig.locales.map((l) => l.code).join('|')})/`))) {

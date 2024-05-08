@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { LocaleObject } from '@nuxtjs/i18n/dist/runtime/composables';
-import type { DropdownItem } from '@nuxthq/ui/dist/runtime/composables';
+import type { LocaleObject } from '@nuxtjs/i18n';
 
 const emit = defineEmits<{
     (event: 'toggleNav'): void;
@@ -11,7 +10,10 @@ const switchLocalePath = useSwitchLocalePath();
 const localePath = useLocalePath();
 
 const items = computed(() => {
-    return (locales.value as LocaleObject[]).map<DropdownItem>((v) => ({
+    return (locales.value as LocaleObject[]).map<{
+        label?: string;
+        to: string;
+    }>((v) => ({
         label: v.name,
         to: switchLocalePath(v.code),
     }));

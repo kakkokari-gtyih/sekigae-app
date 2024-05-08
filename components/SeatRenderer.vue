@@ -76,7 +76,8 @@
 </template>
 
 <script setup lang="ts">
-import { arrangeSeats, Classroom, ClassroomWithStudents, Student } from '../lib/sekigae';
+import { arrangeSeats } from '@/lib/sekigae';
+import type { Classroom, ClassroomWithStudents, Student } from '@/lib/sekigae';
 import Draggable from 'vuedraggable';
 
 const props = withDefaults(defineProps<{
