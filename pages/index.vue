@@ -560,86 +560,96 @@ function importFromCSV() {
             const file = ev.target.files as FileList;
             const reader = new FileReader();
             try {
-                reader.readAsText(file[0]);
+                reader.readAsArrayBuffer(file[0]);
                 reader.addEventListener('load', (ev) => {
-                    const result = ev.target?.result;
+                    const bin = ev.target?.result as ArrayBuffer;
+                    let encoding: 'UTF-8' | 'Shift_JIS' = 'Shift_JIS';
+                    let resBin: Uint8Array;
+                    
+                    // BOMがある場合
+                    const bom = new Uint8Array(bin.slice(0, 3));
+                    if (bom[0] === 0xEF && bom[1] === 0xBB && bom[2] === 0xBF) {
+                        encoding = 'UTF-8';
+                        resBin = new Uint8Array(bin.slice(3));
+                    } else {
+                        resBin = new Uint8Array(bin);
+                    }
+                    console.log('[CSV Encoding]', encoding);
 
-                    if (typeof result === 'string') {
-                        const rawStudents = result.split(/\n/g);
-                        let csvVersion: string = 'v1';
+                    const decoder = new TextDecoder(encoding);
+                    const result = decoder.decode(resBin);
+                    const rawStudents = result.split(/\n/g);
+                    let csvVersion: string = 'v1';
 
-                        if (rawStudents[0].match(new RegExp(`^(")*${t('csvSyntax.headerIdentifier')}`))) {
-                            const detectedVersion = [...rawStudents[0].split(',')].pop().replace(/[\n\r\s]/g, '');
-                            if (Object.keys(csvSchemaKVs).includes(detectedVersion)) {
-                                csvVersion = detectedVersion;
+                    if (rawStudents[0].match(new RegExp(`^(")*${t('csvSyntax.headerIdentifier')}`))) {
+                        const detectedVersion = [...rawStudents[0].split(',')].pop().replace(/[\n\r\s]/g, '');
+                        if (Object.keys(csvSchemaKVs).includes(detectedVersion)) {
+                            csvVersion = detectedVersion;
+                        }
+                        rawStudents.shift();
+                    }
+
+                    console.log('[CSV Syntax Version]', csvVersion);
+
+                    const ci = createGetCSVIndex(csvVersion);
+
+                    const parsedStudents = rawStudents.filter((v) => v.includes(',') && !isNaN(parseInt(v.split(',')[0].replaceAll("\"", "")))).map<Student>((v) => {
+                        let parsedStudent = v.split(",");
+                        let seat: Seat | undefined = undefined;
+                        //@ts-ignore
+                        parsedStudent = parsedStudent.map((e) => e.match(/^"(.*)"$/) !== null ? e.match(/^"(.*)"$/)[1] : e);
+
+                        if (ci('chooseOptions.x') > 0) {
+                            switch (parsedStudent[ci('chooseOptions.x')]?.toUpperCase() ?? '') {
+                                case 'L':
+                                    parsedStudent[ci('chooseOptions.x')] = 'left';
+                                    break;
+                                case 'R':
+                                    parsedStudent[ci('chooseOptions.x')] = 'right';
+                                    break;
+                                default:
+                                    parsedStudent[ci('chooseOptions.x')] = '';
                             }
-                            rawStudents.shift();
                         }
 
-                        console.log('[CSV Syntax Version]', csvVersion);
-
-                        const ci = createGetCSVIndex(csvVersion);
-
-                        const parsedStudents = rawStudents.filter((v) => v.includes(',') && !isNaN(parseInt(v.split(',')[0].replaceAll("\"", "")))).map<Student>((v) => {
-                            let parsedStudent = v.split(",");
-                            let seat: Seat | undefined = undefined;
-                            //@ts-ignore
-                            parsedStudent = parsedStudent.map((e) => e.match(/^"(.*)"$/) !== null ? e.match(/^"(.*)"$/)[1] : e);
-
-                            if (ci('chooseOptions.x') > 0) {
-                                switch (parsedStudent[ci('chooseOptions.x')]?.toUpperCase() ?? '') {
-                                    case 'L':
-                                        parsedStudent[ci('chooseOptions.x')] = 'left';
-                                        break;
-                                    case 'R':
-                                        parsedStudent[ci('chooseOptions.x')] = 'right';
-                                        break;
-                                    default:
-                                        parsedStudent[ci('chooseOptions.x')] = '';
-                                }
+                        if (ci('chooseOptions.y') > 0) {
+                            switch (parsedStudent[ci('chooseOptions.y')]?.toUpperCase() ?? '') {
+                                case 'F':
+                                    parsedStudent[ci('chooseOptions.y')] = 'front';
+                                    break;
+                                case 'R':
+                                    parsedStudent[ci('chooseOptions.y')] = 'rear';
+                                    break;
+                                default:
+                                    parsedStudent[ci('chooseOptions.y')] = '';
                             }
+                        }
 
-                            if (ci('chooseOptions.y') > 0) {
-                                switch (parsedStudent[ci('chooseOptions.y')]?.toUpperCase() ?? '') {
-                                    case 'F':
-                                        parsedStudent[ci('chooseOptions.y')] = 'front';
-                                        break;
-                                    case 'R':
-                                        parsedStudent[ci('chooseOptions.y')] = 'rear';
-                                        break;
-                                    default:
-                                        parsedStudent[ci('chooseOptions.y')] = '';
-                                }
-                            }
+                        if (ci('seat') > 0 && parsedStudent[ci('seat')].includes('_')) {
+                            let p = parsedStudent[ci('seat')].split('_');
+                            seat = {
+                                col: (parseInt(p[0]) - 1),
+                                row: (parseInt(p[1]) - 1),
+                            };
+                        }
 
-                            if (ci('seat') > 0 && parsedStudent[ci('seat')].includes('_')) {
-                                let p = parsedStudent[ci('seat')].split('_');
-                                seat = {
-                                    col: (parseInt(p[0]) - 1),
-                                    row: (parseInt(p[1]) - 1),
-                                };
-                            }
+                        return {
+                            studentId: parseInt(parsedStudent[ci('studentId')]),
+                            name: parsedStudent[ci('name')] == '' ? undefined : parsedStudent[ci('name')],
+                            furigana: parsedStudent[ci('furigana')] == '' ? undefined : parsedStudent[ci('furigana')],
+                            chooseOptions: {
+                                x: ci('chooseOptions.x') < 0 ? undefined : parsedStudent[ci('chooseOptions.x')],
+                                y: ci('chooseOptions.y') < 0 ? undefined : parsedStudent[ci('chooseOptions.y')],
+                                distantStudentIds: ci('chooseOptions.distantStudentIds') < 0 ? undefined : parsedStudent[ci('chooseOptions.distantStudentIds')].split('_').filter((v) => v !== '').map((e) => parseInt(e)),
+                                pairStudentId: ci('chooseOptions.pairStudentId') < 0 ? undefined : parseInt(parsedStudent[ci('chooseOptions.pairStudentId')]),
+                            },
+                            seat,
+                        } as Student;
+                    });
 
-                            return {
-                                studentId: parseInt(parsedStudent[ci('studentId')]),
-                                name: parsedStudent[ci('name')] == '' ? undefined : parsedStudent[ci('name')],
-                                furigana: parsedStudent[ci('furigana')] == '' ? undefined : parsedStudent[ci('furigana')],
-                                chooseOptions: {
-                                    x: ci('chooseOptions.x') < 0 ? undefined : parsedStudent[ci('chooseOptions.x')],
-                                    y: ci('chooseOptions.y') < 0 ? undefined : parsedStudent[ci('chooseOptions.y')],
-                                    distantStudentIds: ci('chooseOptions.distantStudentIds') < 0 ? undefined : parsedStudent[ci('chooseOptions.distantStudentIds')].split('_').filter((v) => v !== '').map((e) => parseInt(e)),
-                                    pairStudentId: ci('chooseOptions.pairStudentId') < 0 ? undefined : parseInt(parsedStudent[ci('chooseOptions.pairStudentId')]),
-                                },
-                                seat,
-                            } as Student;
-                        });
-
-                        students.value.push(...parsedStudents);
-                    } else {
-                        alert(t('students.importFromCSV.error'));
-                    }
+                    students.value.push(...parsedStudents);
                     isUploadingCSV.value = false;
-                });
+                }, { once: true });
             } catch (e) {
                 alert(`${t('students.importFromCSV.error')}\n${t('students.importFromCSV.cannotLoadCSV')}`);
                 isUploadingCSV.value = false;
