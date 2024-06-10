@@ -388,7 +388,10 @@
     animation-iteration-count: 1;
 }
 
-@keyframes :global(count-anim) {
+</style>
+
+<style>
+@keyframes count-anim {
     0% {
         opacity: 0;
         transform: translate(-50%, -50%) scale(3);
