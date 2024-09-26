@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@formkit/drag-and-drop':
+        specifier: ^0.1.6
+        version: 0.1.6
       '@nuxt/devtools':
         specifier: ^1.5.1
         version: 1.5.1(rollup@4.22.4)(vite@5.4.8(@types/node@22.7.2)(terser@5.33.0))(vue@3.5.8(typescript@5.6.2))(webpack-sources@3.2.3)
@@ -645,6 +648,9 @@ packages:
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
+
+  '@formkit/drag-and-drop@0.1.6':
+    resolution: {integrity: sha512-wZyxvk7WTbQ12q8ZGvLoYner1ktBOUf+lCblJT3P0LyqpjGCKTfQMKJtwToKQzJgTbhvow4LBu+yP92Mux321w==}
 
   '@headlessui/tailwindcss@0.2.1':
     resolution: {integrity: sha512-2+5+NZ+RzMyrVeCZOxdbvkUSssSxGvcUxphkIfSVLpRiKsj+/63T2TOL9dBYMXVfj/CGr6hMxSRInzXv6YY7sA==}
@@ -4311,6 +4317,8 @@ snapshots:
     optional: true
 
   '@fastify/busboy@2.1.1': {}
+
+  '@formkit/drag-and-drop@0.1.6': {}
 
   '@headlessui/tailwindcss@0.2.1(tailwindcss@3.4.13)':
     dependencies:

@@ -24,126 +24,149 @@
                 </div>
             </div>
         </div>
-        <div v-if="!editable || !realSeats" class="grid gap-1 grid-flow-col" :style="[showRowCol ? 'grid-area: 3/2/4/3;' : 'grid-area: 2/1/3/2;', `grid-template-columns: repeat(${classroom.length}, 1fr); grid-template-rows: repeat(${classroom[0].length}, 1fr)`]">
-            <div v-if="realSeats" v-for="seat in realSeats" :class="['relative font-bold flex flex-col justify-center text-gray-900', (seat && Number.isInteger(seat?.studentId)) ? 'bg-yellow-200 dark:bg-yellow-600': 'bg-gray-200 dark:bg-gray-700', lg ? 'h-[100px]' : 'h-[60px]']">
-                <template v-if="(seat !== null) && Number.isInteger(seat?.studentId)">
-                    <template v-if="seat?.name">
-                        <div class="absolute top-0 left-0 bg-yellow-400 text-center font-bold rounded-br-md" :class="lg ? 'w-10 text-xl 2xl:text-2xl' : 'w-7 text-base hidden md:block'">{{ seat?.studentId }}</div>
-                        <div v-if="seat?.furigana" class="text-center" :class="lg ? 'text-base 2xl:text-xl' : 'text-xs'">{{ seat?.furigana }}</div>
-                        <div class="text-center" :class="lg ? 'lg:text-3xl xl:text-4xl 2xl:text-[2.75rem] 2xl:leading-[3rem]' : 'text-lg lg:text-xl xl:text-2xl'">{{ seat?.name }}</div>
-                    </template>
-                    <div v-else class="text-center" :class="lg ? 'lg:text-3xl xl:text-4xl 2xl:text-[2.75rem] 2xl:leading-[3rem]' : 'text-lg lg:text-xl xl:text-2xl'">
-                        {{ seat?.studentId }}
+        <div    
+            class="grid gap-1"
+            :style="[showRowCol ? 'grid-area: 3/2/4/3;' : 'grid-area: 2/1/3/2;', `grid-template-columns: repeat(${classroom.length}, 1fr);`]"
+        >
+            <div
+                v-if="seats"
+                v-for="row, rowIndex in seats"
+                ref="dragger"
+                :data-index="rowIndex"
+                class="grid gap-1"
+                :style="`grid-template-rows: repeat(${classroom[0].length}, 1fr)`"
+            >
+                <template v-for="seat, colIndex in row">
+                    <div v-if="seat != null" :key="`seat-${seat.studentId}`" :class="['relative font-bold flex flex-col justify-center text-gray-900 bg-yellow-200 dark:bg-yellow-600', lg ? 'h-[100px]' : 'h-[60px]']">
+                        <template v-if="seat.name">
+                            <div class="absolute top-0 left-0 bg-yellow-400 text-center font-bold rounded-br-md" :class="lg ? 'w-10 text-xl 2xl:text-2xl' : 'w-7 text-base hidden md:block'">{{ seat.studentId }}</div>
+                            <div v-if="seat.furigana" class="text-center" :class="lg ? 'text-base 2xl:text-xl' : 'text-xs'">{{ seat.furigana }}</div>
+                            <div class="text-center" :class="lg ? 'lg:text-3xl xl:text-4xl 2xl:text-[2.75rem] 2xl:leading-[3rem]' : 'text-lg lg:text-xl xl:text-2xl'">{{ seat.name }}</div>
+                        </template>
+                        <div v-else class="text-center" :class="lg ? 'lg:text-3xl xl:text-4xl 2xl:text-[2.75rem] 2xl:leading-[3rem]' : 'text-lg lg:text-xl xl:text-2xl'">
+                            {{ seat.studentId }}
+                        </div>
+                    </div>
+                    <div v-else :key="`empty-seat-${rowIndex}-${colIndex}`" :class="['relative font-bold flex flex-col justify-center text-gray-900 select-none bg-gray-200 dark:bg-gray-800 no-drag', lg ? 'h-[100px]' : 'h-[60px]']">
+
                     </div>
                 </template>
             </div>
-            <div v-else v-for="n of classroom.reduce((p, c) => p + c.length, 0)" :class="['relative font-bold flex flex-col justify-center text-gray-900 select-none', 'bg-gray-200 dark:bg-gray-800', lg ? 'h-[100px]' : 'h-[60px]']">
-
+            <div    
+                v-else
+                v-for="row, rowIndex in classroom"
+                class="grid gap-1"
+                :style="`grid-template-rows: repeat(${classroom[0].length}, 1fr)`"
+            >
+                <div v-for="col, colIndex in row" :key="`placeholder-row-${rowIndex}`">
+                    <div :key="`placeholder-seat-${rowIndex}-${colIndex}`" class="relative font-bold flex flex-col justify-center text-gray-900 select-none bg-gray-200 dark:bg-gray-800" :class="lg ? 'h-[100px]' : 'h-[60px]'"></div>
+                </div>
             </div>
         </div>
-        <Draggable
-            v-else-if="realSeats"
-            :list="realSeats"
-            handle=".draggable"
-            direction="horizontal"
-            @change="onDraggerChanges"
-            item-key="studentId"
-            class="grid gap-1 grid-flow-col"
-            :style="[showRowCol ? 'grid-area: 3/2/4/3;' : 'grid-area: 2/1/3/2;', `grid-template-columns: repeat(${classroom.length}, 1fr); grid-template-rows: repeat(${classroom[0].length}, 1fr)`]"
-            :animation="150"
-            @start="(e) => e.item.classList.add('active')"
-            @end="(e) => e.item.classList.remove('active')"
-        >
-            <template #item="{ element, index }">
-                <div :class="['relative font-bold flex flex-col justify-center text-gray-900 select-none', (element && Number.isInteger(element.studentId)) ? 'draggable bg-yellow-200 dark:bg-yellow-600': 'bg-gray-200 dark:bg-gray-800', lg ? 'h-[100px]' : 'h-[60px]']">
-                    <template v-if="element !== null && Number.isInteger(element.studentId)">
-                        <template v-if="element.name">
-                            <div class="absolute top-0 left-0 bg-yellow-400 text-center font-bold rounded-br-md" :class="lg ? 'w-10 text-xl 2xl:text-2xl' : 'w-7 text-base hidden md:block'">{{ element.studentId }}</div>
-                            <div v-if="element.furigana" class="text-center" :class="lg ? 'text-base 2xl:text-xl' : 'text-xs'">{{ element.furigana }}</div>
-                            <div class="text-center" :class="lg ? 'lg:text-3xl xl:text-4xl 2xl:text-[2.75rem] 2xl:leading-[3rem]' : 'text-lg lg:text-xl xl:text-2xl'">
-                                {{ element.name }}
-                            </div>
-                        </template>
-                        <div v-else class="text-center" :class="lg ? 'lg:text-3xl xl:text-4xl 2xl:text-[2.75rem] 2xl:leading-[3rem]' : 'text-lg lg:text-xl xl:text-2xl'">
-                            {{ element.studentId }}
-                        </div>
-                    </template>
-                </div>
-            </template>
-
-        </Draggable>
     </div>
 </template>
 
 <script setup lang="ts">
-import { arrangeSeats } from '@/lib/sekigae';
-import type { Classroom, ClassroomWithStudents, Student } from '@/lib/sekigae';
-import Draggable from 'vuedraggable';
+import { swap, updateConfig } from '@formkit/drag-and-drop';
+import { dragAndDrop } from '@formkit/drag-and-drop/vue';
+import type { Classroom, ClassroomWithStudents } from '@/lib/sekigae';
 
 const props = withDefaults(defineProps<{
     classroom: Classroom;
-    seats?: ClassroomWithStudents;
     lg?: boolean;
     showRowCol?: boolean;
     editable?: boolean;
 }>(), {
-    seats: undefined,
     lg: false,
     showRowCol: false,
     editable: false,
 });
-const emits = defineEmits<{
-    (event: 'changeSeat', to: ClassroomWithStudents | undefined): void;
-}>();
+
+const seats = defineModel<ClassroomWithStudents | undefined>({
+    required: true,
+    set: (to) => {
+        if (to == null) return to;
+
+        // row, colを編集してから返す
+        to.forEach((row, rowIndex) => {
+            row.forEach((col, colIndex) => {
+                if (col == null) return;
+                if (col.seat == null) {
+                    col.seat = {
+                        row: rowIndex,
+                        col: colIndex,
+                    };
+                } else {
+                    col.seat.row = rowIndex;
+                    col.seat.col = colIndex;
+                }
+            });
+        });
+
+        return to;
+    },
+});
+
+const refEdSeats = computed({
+    get: () => {
+        if (seats.value == null) return undefined;
+        return seats.value.map((v) => toRef(v.filter((va) => va != null)));
+    },
+    set: (to) => {
+        if (to == null) {
+            seats.value = undefined;
+        } else {
+            seats.value = to.map((v, i) => props.classroom[i].map((f, j) => f ? v.value[j] : null));
+        }
+    },
+});
+
 const { locale } = useI18n();
 
-function getSeatsForDragger(seats?: ClassroomWithStudents): (Student | { studentId: number; })[] {
-    if (!seats) {
-        return new Array(props.classroom.length * props.classroom[0].length).fill({ studentId: (Math.random() / 10) + 0.1 });
+const draggers = useTemplateRef<HTMLDivElement[]>('dragger');
+
+function initDrag() {
+    if (refEdSeats.value != null && draggers.value && Array.isArray(draggers.value)) {
+        draggers.value.forEach((dragger) => {
+            const rowIndex = dragger.dataset.index ? parseInt(dragger.dataset.index) : null;
+            if (rowIndex == null) return;
+            dragAndDrop({
+                parent: dragger,
+                values: refEdSeats.value![rowIndex],
+                group: 'seats',
+                draggable: (el) => {
+                    return !el.classList.contains('no-drag');
+                },
+                plugins: [
+                    swap(),
+                ],
+            })
+        });
     }
-    // 座席無しの部分は必ず小数の乱数とする
-    return seats.map((e, i) => e.map((f) => f ? f : { studentId: (Math.random() / 10) + 0.1 })).flat();
 }
 
-function getSeats(draggerSeats?: (Student | { studentId: number; })[]): ClassroomWithStudents {
-    const refreshedStudents = draggerSeats?.map((e, i) => {
-        // 座席無しの部分は必ず小数の乱数とする
-        if (!Number.isInteger(e.studentId)) {
-            return null;
-        }
-        e.seat.col = i % props.classroom[0].length;
-        e.seat.row = Math.floor(i / props.classroom[0].length);
-        return e;
-    }).filter((f) => f != null);
-    console.log({ refreshedStudents });
-    return arrangeSeats(refreshedStudents as Student[], props.classroom);
-}
+watch(() => props.editable, (to) => {
+    draggers.value?.forEach((dragger) => {
+        updateConfig(dragger, { disabled: !to });
+    });
+});
 
-const realSeats = ref<(Student | { studentId: number; })[] | undefined>(getSeatsForDragger(props?.seats));
-
-watch(() => props.seats, (to) => {
-    console.log({ to });
-    if (!to) {
-        realSeats.value = undefined;
-    } else {
-        realSeats.value = getSeatsForDragger(to);
-    }
+watch(seats, () => {
+    nextTick(() => {
+        initDrag();
+    });
 });
 
 watch(() => props.classroom, () => {
-    realSeats.value = undefined;
-}, {
-    deep: true,
-});
+    seats.value = undefined;
+    initDrag();
+}, { deep: true });
 
-function onDraggerChanges() {
-    if (!props.editable) {
-        return;
-    } else if (!realSeats.value) {
-        emits('changeSeat', undefined);
+onMounted(() => {
+    if (import.meta.client) {
+        initDrag();
     }
-    emits('changeSeat', getSeats(realSeats.value));
-}
+});
 
 function getAlphabetCode(numeric_col_index: number): string {
     const RADIX = 26;

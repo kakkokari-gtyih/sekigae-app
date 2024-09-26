@@ -210,11 +210,10 @@
                                 <LazySeatRenderer
                                     id="seats"
                                     :classroom="classroom"
-                                    :seats="resultForRendering"
                                     :show-row-col="seatRendererOptions.showRowCol"
                                     :lg="isFullScreen"
                                     :editable="effectState === 'done' && !seatRendererOptions.disableEditing"
-                                    @change-seat="changeSeatHandler"
+                                    v-model="resultForRendering"
                                 ></LazySeatRenderer>
                                 <div v-for="n of 3" :class="['absolute z-10 text-5xl lg:text-9xl font-bold top-1/2 left-1/2 opacity-0 text-red-500 select-none pointer-events-none', timerCount === n && $style.countAnim]">{{ n }}</div>
                             </div>
@@ -868,7 +867,16 @@ const studentActionItems = (row: Student) => [
 
 // Sekigae START
 const result = ref<Student[]>();
-const resultForRendering = computed<ClassroomWithStudents | undefined>(() => result.value ? arrangeSeats(result.value, classroom.value) : undefined);
+const resultForRendering = computed<ClassroomWithStudents | undefined>({
+    get: () => result.value ? arrangeSeats(result.value, classroom.value) : undefined,
+    set: (to) => {
+        if (!to) {
+            result.value = undefined;
+            return;
+        }
+        result.value = extractStudentsFromSeats(to);
+    },
+});
 const seatRendererOptions = ref({
     showRowCol: false,
     disableEditing: false,
@@ -939,13 +947,6 @@ function execSekigae() {
     }
 }
 
-function changeSeatHandler(to: ClassroomWithStudents | undefined): void {
-    if (!to) {
-        result.value = undefined;
-        return;
-    }
-    result.value = extractStudentsFromSeats(to);
-}
 // Sekigae END
 
 // PostSekigae START
