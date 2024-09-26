@@ -410,6 +410,7 @@
 import type { Classroom, ClassroomWithStudents, Student, Seat } from '@/lib/sekigae';
 import { arrangeSeats, assignSeats, getSeatNumber, extractStudentsFromSeats } from '@/lib/sekigae';
 import { csvSchemaKVs, createGetCSVIndex } from '@/lib/csvDefs';
+import { csvDefsSet } from '@/assets/data/csvDefsSet';
 
 const isMounted = ref<boolean>(false);
 onMounted(() => {
@@ -584,9 +585,9 @@ function importFromCSV() {
                     const rawStudents = result.split(/\n/g);
                     let csvVersion: string = 'v1';
 
-                    if (rawStudents[0].match(new RegExp(`^(")*${t('csvSyntax.headerIdentifier')}`))) {
-                        const detectedVersion = [...rawStudents[0].split(',')].pop().replace(/[\n\r\s]/g, '');
-                        if (Object.keys(csvSchemaKVs).includes(detectedVersion)) {
+                    if (rawStudents[0].match(new RegExp(`^(")*${csvDefsSet.join('|')}`))) {
+                        const detectedVersion = [...rawStudents[0].split(',')].pop()?.replace(/[\n\r\s]/g, '');
+                        if (detectedVersion != null && Object.keys(csvSchemaKVs).includes(detectedVersion)) {
                             csvVersion = detectedVersion;
                         }
                         rawStudents.shift();
