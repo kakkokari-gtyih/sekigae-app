@@ -4,7 +4,7 @@ import { promises as fsp } from 'fs';
 
 export async function genCSVDefsSet() {
     // get all locales
-    const localeFilePaths = localesConst.map(locale => path.resolve(__dirname, `../locales/${locale.files[0]}`));
+    const localeFilePaths = localesConst.map(locale => path.resolve(import.meta.dirname, `../locales/${locale.files[0]}`));
 
     const locales = await Promise.all(localeFilePaths.map((localeFilePath) => fsp.readFile(localeFilePath, 'utf-8').then(JSON.parse)));
 
@@ -14,5 +14,5 @@ export async function genCSVDefsSet() {
 
     const outString = `export const csvDefsSet = ${JSON.stringify(csvHeaders)};`;
 
-    await fsp.writeFile(path.resolve(__dirname, '../assets/data/csvDefsSet.ts'), outString);
+    await fsp.writeFile(path.resolve(import.meta.dirname, '../assets/data/csvDefsSet.ts'), outString);
 }
