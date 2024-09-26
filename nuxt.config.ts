@@ -7,6 +7,7 @@ import { locales } from './assets/data/locales';
 const baseUrl = 'https://sekigae.app';
 
 export default defineNuxtConfig({
+    compatibilityDate: '2024-09-26',
     runtimeConfig: {
         locales,
         public: {

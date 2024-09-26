@@ -30,7 +30,7 @@
                 <template #classroom>
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="mb-4">
-                            <I18nT keypath="classroom.colRow" tag="p" class="sm:text-lg">
+                            <I18nT scope="global" keypath="classroom.colRow" tag="p" class="sm:text-lg">
                                 <template #col><b>{{ classroom.length }}</b></template>
                                 <template #row><b>{{ classroom[0].length }}</b></template>
                                 <template #seatCount><b>{{ availableSeats }}</b></template>
@@ -77,7 +77,7 @@
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="flex flex-col sm:flex-row items-center mb-4">
                             <div class="mb-4 sm:mb-0">
-                                <I18nT keypath="students.seatsAndStudents" tag="p" class="sm:text-lg">
+                                <I18nT scope="global" keypath="students.seatsAndStudents" tag="p" class="sm:text-lg">
                                     <template #seatCount><b>{{ availableSeats }}</b></template>
                                     <template #studentCount><b>{{ students.length }}</b></template>
                                 </I18nT>
