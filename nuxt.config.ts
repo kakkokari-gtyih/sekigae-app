@@ -1,14 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import genSitemap from './scripts/gen-sitemap';
-import type { LocaleObject } from '@nuxtjs/i18n';
+import { genCSVDefsSet } from './scripts/gen-csv-defs-set';
+import { locales } from './assets/data/locales';
 
 // 公開時のドメイン（末尾スラッシュなし）
 const baseUrl = 'https://sekigae.app';
-
-export const locales: LocaleObject[] = [
-	{ code: 'ja', iso: 'ja-JP', name: '日本語' },
-	{ code: 'en', iso: 'en-US', name: 'English' },
-];
 
 export default defineNuxtConfig({
     runtimeConfig: {
@@ -45,6 +41,8 @@ export default defineNuxtConfig({
 		defaultLocale: 'ja',
 		strategy: 'prefix',
         trailingSlash: true,
+        lazy: true,
+        langDir: 'locales',
     },
     nitro: {
 		hooks: {
@@ -67,5 +65,10 @@ export default defineNuxtConfig({
 	},
     features: {
         inlineStyles: false,
+    },
+    hooks: {
+        'build:before': async () => {
+            await genCSVDefsSet();
+        },
     },
 })
