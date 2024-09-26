@@ -30,7 +30,7 @@
                 <template #classroom>
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="mb-4">
-                            <I18nT keypath="classroom.colRow" tag="p" class="sm:text-lg">
+                            <I18nT scope="global" keypath="classroom.colRow" tag="p" class="sm:text-lg">
                                 <template #col><b>{{ classroom.length }}</b></template>
                                 <template #row><b>{{ classroom[0].length }}</b></template>
                                 <template #seatCount><b>{{ availableSeats }}</b></template>
@@ -77,7 +77,7 @@
                     <UCard class="flex flex-col flex-1 overflow-y-auto">
                         <div class="flex flex-col sm:flex-row items-center mb-4">
                             <div class="mb-4 sm:mb-0">
-                                <I18nT keypath="students.seatsAndStudents" tag="p" class="sm:text-lg">
+                                <I18nT scope="global" keypath="students.seatsAndStudents" tag="p" class="sm:text-lg">
                                     <template #seatCount><b>{{ availableSeats }}</b></template>
                                     <template #studentCount><b>{{ students.length }}</b></template>
                                 </I18nT>
@@ -388,7 +388,10 @@
     animation-iteration-count: 1;
 }
 
-@keyframes :global(count-anim) {
+</style>
+
+<style>
+@keyframes count-anim {
     0% {
         opacity: 0;
         transform: translate(-50%, -50%) scale(3);
@@ -407,6 +410,7 @@
 import type { Classroom, ClassroomWithStudents, Student, Seat } from '@/lib/sekigae';
 import { arrangeSeats, assignSeats, getSeatNumber, extractStudentsFromSeats } from '@/lib/sekigae';
 import { csvSchemaKVs, createGetCSVIndex } from '@/lib/csvDefs';
+import { csvDefsSet } from '@/assets/data/csvDefsSet';
 
 const isMounted = ref<boolean>(false);
 onMounted(() => {
@@ -581,9 +585,9 @@ function importFromCSV() {
                     const rawStudents = result.split(/\n/g);
                     let csvVersion: string = 'v1';
 
-                    if (rawStudents[0].match(new RegExp(`^(")*${t('csvSyntax.headerIdentifier')}`))) {
-                        const detectedVersion = [...rawStudents[0].split(',')].pop().replace(/[\n\r\s]/g, '');
-                        if (Object.keys(csvSchemaKVs).includes(detectedVersion)) {
+                    if (rawStudents[0].match(new RegExp(`^(")*${csvDefsSet.join('|')}`))) {
+                        const detectedVersion = [...rawStudents[0].split(',')].pop()?.replace(/[\n\r\s]/g, '');
+                        if (detectedVersion != null && Object.keys(csvSchemaKVs).includes(detectedVersion)) {
                             csvVersion = detectedVersion;
                         }
                         rawStudents.shift();
