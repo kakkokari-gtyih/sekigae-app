@@ -43,7 +43,7 @@ export default defineNuxtConfig({
 		strategy: 'prefix',
         trailingSlash: true,
         lazy: true,
-        langDir: 'locales',
+        langDir: './../locales',
     },
     nitro: {
 		hooks: {
