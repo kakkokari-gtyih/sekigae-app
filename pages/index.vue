@@ -306,7 +306,7 @@
                             <UFormGroup name="pairStudentId" :label="$t('students.studentEdit.distantOrPairStudent.pairStudent')" class="pb-2">
                                 <div>
                                     <USelectMenu id="pairStudentId" searchable :options="[{ studentId: null, name: t('common.pleaseChoose') } ,...students]" v-model="(currentEditObject.chooseOptions.pairStudentId as number)" value-attribute="studentId" option-attribute="name" :search-attributes="['name', 'furigana']">
-                                        <template #label>{{ students.find((v) => v.studentId === (currentEditObject.chooseOptions.pairStudentId ?? -1))?.name ?? $t('common.pleaseChoose') }}</template>
+                                        <template #label>{{ students.find((v) => v.studentId === (currentEditObject?.chooseOptions?.pairStudentId ?? -1))?.name ?? $t('common.pleaseChoose') }}</template>
                                     </USelectMenu>
                                 </div>
                             </UFormGroup>
@@ -999,12 +999,13 @@ function toggleFullScreen() {
             });
         } else if(sekigaeResultView.value) {
             sekigaeResultView.value?.requestFullscreen().then(() => {
-                screen.orientation.lock('landscape').catch((error) => {
-                    console.warn(error);
-                }).finally(() => {
-                    isFullScreen.value = true;
-                    document.addEventListener('fullscreenchange', resetFullScreenState);
-                });
+                if ('lock' in screen.orientation) {
+                    (screen.orientation.lock as (l: OrientationType) => Promise<void>)('landscape-primary').catch((error) => {
+                        console.warn(error);
+                    });
+                }
+                isFullScreen.value = true;
+                document.addEventListener('fullscreenchange', resetFullScreenState);
             });
         }
     }

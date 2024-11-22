@@ -40,10 +40,10 @@ export default defineNuxtConfig({
 		vueI18n: './i18n.config.ts',
 		locales,
 		defaultLocale: 'ja',
-		strategy: 'prefix',
+		strategy: 'prefix_and_default',
         trailingSlash: true,
         lazy: true,
-        langDir: 'locales',
+        langDir: './../locales',
     },
     nitro: {
 		hooks: {
